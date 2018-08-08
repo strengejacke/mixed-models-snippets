@@ -11,6 +11,15 @@ library(sjPlot)
 # Bell A, Fairbrother M, Jones K. Fixed and random effects models: making an
 # informed choice. Quality & Quantity. 2018; doi:10.1007/s11135-018-0802-x
 
+# The solution to the critics of "FE-modeler" is simple:
+# If you include a group mean of your variables in a random effects model,
+# it will give the same answer as a fixed effects model. (see
+# https://twitter.com/AndrewJDBell/status/1026764338370105344).
+# Calling it a FE model is not just inaccurate. It also does down its
+# potential. Eg FE models don’t usually include random slopes, and failing to
+# do so can lead to incorrect SEs as well as being a less interesting
+# and realistic model.
+
 # This code snippet shows how to translate the Eq. 10 from the above mentioned
 # paper into R-code, using lmer() from the lme4-package.
 
