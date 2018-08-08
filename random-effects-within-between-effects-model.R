@@ -108,7 +108,7 @@ tab_model(m1, m2, m3, m5, show.ci = F, show.se = T)
 
 
 
-# Comparison FE- and Mundlak-RE-Model
+# Comparison FE- and REWB-Model
 
 m6 <- lm(
   QoL ~ 0 + time + x_tv_dm + ID,
