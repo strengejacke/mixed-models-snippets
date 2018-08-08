@@ -47,12 +47,22 @@ d <- d %>%
   mutate(
     x_tv_gm = mean(x_tv, na.rm = T),
     x_tv_dm = x_tv - x_tv_gm
-  )
+  ) %>%
+  ungroup()
+
+# The random-effect-within-between model (REWB)
 
 # Eq. 10 suggests allowing the "within-effect" (de-meaned) vary across
 # individuals, that's why "x_tv_dm" is added as random slope as well.
 # This leads to an error (number of observations <= number of random effects),
 # so the check for nobs vs. re is ignored here
+
+# Here, the estimate of "x_tv_dm" indicates the within-subject effect,
+# while the estimate of "x_tv_gm" indicates the between-subject effect.
+# This model also allows for heterogenity across level-2 units, that's
+# why "x_tv_dm" also appears in the random effects.
+
+# Model from Equation 10
 
 m2 <- lmer(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm | ID),
@@ -62,10 +72,15 @@ m2 <- lmer(
 
 # After email correspondance, the paper's authors suggest that, depending
 # on the research interest and necessary complexity of the model, a
-# "simple" random-slope might be suitable as well...
+# "simple" random-slope might be suitable as well. As stated in the paper,
+# this is useful if homogenity across level-2 units is assumed.
 
 # ...however, I'm a bit unsure whether "time" or "x_tv_dm" should be used
-# as random-slope. I think "m3" is better here.
+# as random-slope. I think "m3" is better here. Again, the estimate of
+# "x_tv_dm" indicates the within-subject effect, while the estimate of
+# "x_tv_gm" indicates the between-subject effect.
+
+# Model from Equation 2
 
 m3 <- lmer(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
@@ -77,4 +92,15 @@ m4 <- lmer(
   data = d
 )
 
-tab_model(m1, m2, m3, m4, show.ci = F, show.se = T)
+# An alternativ would be the "Mundlak" model. Here, the estimate of "x_tv"
+# indicates the within-subject effect, while the estimate of "x_tv_gm" indicates
+# the "contextual" effect.
+
+# Model from Equation 3
+
+m5 <- lmer(
+  QoL ~ time + age + x_tv + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
+  data = d
+)
+
+tab_model(m1, m2, m3, m5, show.ci = F, show.se = T)
