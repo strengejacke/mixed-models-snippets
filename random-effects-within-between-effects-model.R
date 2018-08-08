@@ -110,15 +110,20 @@ tab_model(m1, m2, m3, m5, show.ci = F, show.se = T)
 
 # Comparison FE- and REWB-Model
 
+# Model from Equation 5
+
 m6 <- lm(
   QoL ~ 0 + time + x_tv_dm + ID,
   data = d
 )
 
+# Model from Equation 6
+
 m6b <- lm(
   QoL_m ~ 0 + time + x_tv_dm,
   data = d
 )
+
 
 m7 <- lmer(
   QoL ~ time + x_tv_dm + x_tv_gm + (1 | ID),
