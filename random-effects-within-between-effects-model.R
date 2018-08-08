@@ -143,3 +143,35 @@ m7 <- lmer(
 )
 
 tab_model(m6, m6b, m7, show.ci = F, show.se = T)
+
+
+# Further critics of the FE-approach
+# (source: http://andrewgelman.com/2012/04/02/fixed-effects-and-identification/)
+#
+# "But the so-called fixed effects model does not in general minimize bias. It
+# only minimizes bias under some particular models. As I wrote above, 'it’s
+# just another model.' Another way to see this, in the time-series cross-sectional
+# case, is to recognize that there’s no reason to think of group-level coefficients
+# as truly 'fixed'. One example I remember was a regression on some political
+# outcomes, with 40 years of data for each of 50 states, where the analysis
+# included 'fixed effects' for states. I’m sorry but it doesn’t really make
+# sense to think of Vermont from 1960 through 2000 as being 'fixed' in
+# any sense."
+#
+# "I just don’t see how setting the group-level variance to infinity can be
+# better than estimating it from the data or setting it to a reasonable finite
+# value. That said, the big advantage of multilevel (“random effects”) modeling
+# comes when you are interested in the varying coefficients themselves, or if
+# you’re interested in predictions for new groups, or if you want the treatment
+# effect itself to vary by group. On a slightly different note, I’m unhappy with
+# many of the time-series cross-sectional analyses I’ve seen because I don’t buy
+# the assumption of constancy over time. That is, I don’t really think those
+# effects are “fixed”!"
+#
+# "I don’t know that there’s anything much that’s time-invariant in what I study.
+# But, in any case, the so-called fixed-effects analysis is mathematically a
+# special case of multilevel modeling in which the group-level variance is set
+# to infinity. I agree that there’s no need to “believe” that model for the
+# method to work; however, I think it works because of some implicit additivity
+# assumptions. I’d prefer to (a) allow the group-level variance to be finite,
+# and (b) work in the relevant assumptions more directly."
