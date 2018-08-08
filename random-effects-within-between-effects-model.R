@@ -46,7 +46,8 @@ d <- d %>%
   group_by(ID) %>%
   mutate(
     x_tv_gm = mean(x_tv, na.rm = T),
-    x_tv_dm = x_tv - x_tv_gm
+    x_tv_dm = x_tv - x_tv_gm,
+    QoL_m = QoL - mean(QoL, na.rm = T)
   ) %>%
   ungroup()
 
@@ -104,3 +105,24 @@ m5 <- lmer(
 )
 
 tab_model(m1, m2, m3, m5, show.ci = F, show.se = T)
+
+
+
+# Comparison FE- and Mundlak-RE-Model
+
+m6 <- lm(
+  QoL ~ 0 + time + x_tv_dm + ID,
+  data = d
+)
+
+m6b <- lm(
+  QoL_m ~ 0 + time + x_tv_dm,
+  data = d
+)
+
+m7 <- lmer(
+  QoL ~ time + x_tv_dm + x_tv_gm + (1 | ID),
+  data = d
+)
+
+tab_model(m6, m6b, m7, show.ci = F, show.se = T)
