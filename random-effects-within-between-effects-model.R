@@ -83,9 +83,12 @@ m2 <- lmer(
 # After email correspondance, the paper's authors suggest that, depending
 # on the research interest and necessary complexity of the model, a
 # "simple" random-slope might be suitable as well. As stated in the paper,
-# this is useful if homogenity across level-2 units is assumed.
+# this is useful if homogenity across level-2 units is assumed. This model
+# usually yields the same results as a FE-model, however, we additionally
+# have information about the random effects - and the model can incorporate
+# time-invariant covariates.
 
-# ...however, I'm a bit unsure whether "time" or "x_tv_dm" should be used
+# Yet, I'm a bit unsure whether "time" or "x_tv_dm" should be used
 # as random-slope. I think "m3" is better here. Again, the estimate of
 # "x_tv_dm" indicates the within-subject effect, while the estimate of
 # "x_tv_gm" indicates the between-subject effect.
