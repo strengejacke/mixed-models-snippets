@@ -34,7 +34,7 @@ load("example.RData")
 # time  : time-point of measurement
 
 
-# "classical" growth-model for longitudinal data
+# "classical" growth-model for longitudinal data ----
 
 m1 <- lmer(
   QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID),
@@ -60,7 +60,8 @@ d <- d %>%
   ) %>%
   ungroup()
 
-# The random-effect-within-between model (REWB)
+
+# The complex random-effect-within-between model (REWB) ----
 
 # Eq. 10 suggests allowing the "within-effect" (de-meaned) vary across
 # individuals, that's why "x_tv_dm" is added as random slope as well.
@@ -70,7 +71,9 @@ d <- d %>%
 # Here, the estimate of "x_tv_dm" indicates the within-subject effect,
 # while the estimate of "x_tv_gm" indicates the between-subject effect.
 # This model also allows for heterogenity across level-2 units, that's
-# why "x_tv_dm" also appears in the random effects.
+# why "x_tv_dm" also appears in the random effects. The estimates of z1_ti
+# and z2_ti also indicate a between-effect, as this is a level-2 variable,
+# which cannot have a within-effect.
 
 # Model from Equation 10
 
@@ -79,6 +82,9 @@ m2 <- lmer(
   data = d,
   control = lmerControl(check.nobs.vs.nRE = "ignore")
 )
+
+
+# The simple random-effect-within-between model (REWB) and Mundlak model ----
 
 # After email correspondance, the paper's authors suggest that, depending
 # on the research interest and necessary complexity of the model, a
@@ -119,8 +125,17 @@ m5 <- lmer(
 tab_model(m1, m2, m3, m5, show.ci = F, show.se = T)
 
 
+# Check if a REWB- or simple RE-model suitable ----
 
-# Comparison FE- and REWB-Model
+# If the estimates of the within- and between-effect (x_tv_dm and x_tv_gm)
+# are (almost) identical, or if the contextual effect (x_tv_gm) in the Mundrak
+# model equals zero and doesn't give a significant improvement for the model, you
+# can also use a simple RE-model.
+
+anova(m1, m5)
+
+
+# Comparison FE- and REWB-Model ----
 
 # Model from Equation 5
 
