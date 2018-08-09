@@ -1,0 +1,211 @@
+---
+title: "Fixed and Random Effects Models"
+author: "Daniel Lüdecke"
+date: "9 August 2018"
+output: html_document
+bibliography: random-effects-within-between-effects-model.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE, 
+  comment = "#>", 
+  dev = "png"
+)
+```
+
+## The violation of the Gauss-Markov-assumption in RE-models
+
+This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are the gold-standard for these cases, however, it often  makes no sense to consider group-effects as "fixed" over a long time period. Apart from this, there are more shortcomings of FE-models as well, see [@bell_fixed_2018] and [@bell_understanding_2018].
+
+The following equations and discussion on FE vs. RE is based on [@bell_fixed_2018]. Further  discussion on FE vs. RE, also at the end of this document, refer to [@gelman_data_2007] and [@bafumi_fitting_2006].
+
+The solution to the critics from "FE-modelers" is simple: If you include a group mean of your variables in a random effects model,it will give the same answer as a fixed effects model (see second table very below, and [@bell_understanding_2018] as reference). This is why FE-modelers often call this type of RE-model also a "kind of" FE-model. However,
+
+> "Calling it a FE model is not just inaccurate. It also does down its potential. Eg FE models don’t usually include random slopes, and failing to do so can lead to incorrect SEs as well as being a less interesting and realistic model."
+
+source: [Twitter-Discussion](https://twitter.com/AndrewJDBell/status/1026764338370105344)
+
+This code snippet shows how to translate the Equations from [@bell_fixed_2018] into R-code, using `lmer()` from the **lme4**-package.
+
+```{r message=FALSE}
+library(lme4)
+library(dplyr)
+library(sjPlot)
+
+load("example.RData")
+```
+
+## Description of the data
+
+* Variables:
+  * `x_tv`  : time-varying variable
+  * `z1_ti` : first time-invariant variable, co-variate
+  * `z2_ti` : second time-invariant variable, co-variate
+  * `QoL`   : Response (quality of life of patient)
+  * `ID`    : patient ID
+  * `time`  : time-point of measurement
+
+
+## "Classical" growth-model for longitudinal data
+
+```{r}
+m1 <- lmer(
+  QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID),
+  data = d
+)
+```
+
+## Computing the de-meaned and group-meaned variables
+
+Next is a model from Eq. 10, which includes the _"de-meaned"_ time-varying variable as well as the _"group-meaned"_ time-varying variable.
+
+```{r}
+# compute mean of "x_tv" for each subject (ID) and
+# then "de-mean" x_tv
+
+d <- d %>%
+  group_by(ID) %>%
+  mutate(
+    x_tv_gm = mean(x_tv, na.rm = T),
+    x_tv_dm = x_tv - x_tv_gm,
+    QoL_m = mean(QoL, na.rm = T),
+    QoL_gm = QoL - QoL_m
+  ) %>%
+  ungroup()
+```
+
+Now we have:
+
+  * `x_tv_gm` : time-varying variable with the mean of `x_tv` accross all time-points, for each patient (ID).
+  * `x_tv_dm` : the de-meaned time-varying variable `x_tv`
+
+
+## The complex random-effect-within-between model (REWB)
+
+Eq. 10 suggests allowing the "within-effect" (de-meaned) vary across individuals, that's why `x_tv_dm` is added as random slope as well. Since this leads to an error (number of observations <= number of random effects), the check for nobs vs. re is ignored here.
+
+Here, the estimate of `x_tv_dm` indicates the _within-subject_ effect, while the estimate of `x_tv_gm` indicates the _between-subject_ effect. This model also allows for heterogenity across level-2 units, that's why `x_tv_dm` also appears in the random effects. The estimates of `z1_ti`
+ and `z2_ti` also indicate a _between-subject_ effect, as this is a level-2 variable, which cannot have a within-subject effect.
+
+
+### Model from Equation 10
+
+```{r}
+m2 <- lmer(
+  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm | ID),
+  data = d,
+  control = lmerControl(check.nobs.vs.nRE = "ignore")
+)
+```
+
+
+## The simple random-effect-within-between model (REWB) and Mundlak model
+
+After email correspondance, the paper's authors suggest that, depending on the research interest and necessary complexity of the model, a "simple" random-slope might be suitable as well. As stated in the paper, this is useful if homogenity across level-2 units is assumed. This model usually yields the same results as a FE-model, however, we additionally have information about the random effects - and the model can incorporate time-invariant covariates.
+
+Yet, I'm a bit unsure whether `time` or `x_tv_dm` should be used as random-slope in this simpler model. I think `m3` is better here. Again, the estimate of `x_tv_dm` indicates the within-subject effect, while the estimate of `x_tv_gm` indicates the between-subject effect.
+
+
+### Model from Equation 2
+
+```{r}
+m3 <- lmer(
+  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
+  data = d
+)
+
+m4 <- lmer(
+  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + x_tv_dm | ID),
+  data = d
+)
+```
+
+An alternativ would be the **Mundlak** model. Here, the estimate of `x_tv` indicates the _within-subject_ effect, while the estimate of `x_tv_gm` indicates the _contextual_ effect.
+
+### Model from Equation 3
+
+```{r}
+m5 <- lmer(
+  QoL ~ time + age + x_tv + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
+  data = d
+)
+```
+
+## Comparison of models
+
+Here we compare the "classical" RE-model, the complex REWB-model, the "simple" REWB-model and the Mundlak-Model.
+
+```{r message=FALSE}
+tab_model(
+  m1, m2, m3, m5,
+  show.ci = FALSE, 
+  show.se = TRUE, 
+  auto.label = FALSE, 
+  string.se = "SE",
+  show.icc = FALSE,
+  dv.labels = c("Classical RE", "Complex REWB", "Simple REWB", "Mundlak")
+)
+```
+
+
+## Check if a REWB- or simple RE-model suitable
+
+If the estimates of the within- and between-effect (`x_tv_dm` and `x_tv_gm`) are (almost) identical, or if the contextual effect (`x_tv_gm`) in the **Mundlak**-model is zero and doesn't give a significant improvement for the model, you can also use a simple RE-model.
+
+```{r}
+anova(m1, m5)
+```
+
+## Comparison FE- and REWB-Model
+
+```{r}
+# Model from Equation 5
+m6 <- lm(
+  QoL ~ 0 + time + x_tv_dm + ID,
+  data = d
+)
+
+# Model from Equation 6
+m6b <- lm(
+  QoL_gm ~ 0 + time + x_tv_dm,
+  data = d
+)
+
+m6c <- lm(
+  QoL_gm ~ time + x_tv_dm,
+  data = d
+)
+
+m7 <- lmer(
+  QoL ~ time + x_tv_dm + x_tv_gm + (1 | ID),
+  data = d
+)
+```
+
+As we can see, the estimates of the (first) FE-model and the RE-model are identical. The second FE-Model, where the response was de-meaned, has a very slight difference in the estimates, the third FE-model (with Intercept) has the same estimates again.
+
+```{r message=FALSE}
+tab_model(
+  m6, m6b, m6c, m7, 
+  show.ci = FALSE, 
+  show.se = TRUE, 
+  auto.label = FALSE, 
+  string.se = "SE",
+  show.icc = FALSE,
+  dv.labels = c("FE-model with ID", "FE, de-meaned Y", "FE, with Intercept", "RE")
+)
+```
+
+## Further critics of the FE-approach
+
+(source: http://andrewgelman.com/2012/04/02/fixed-effects-and-identification/)
+
+> "But the so-called fixed effects model does not in general minimize bias. It only minimizes bias under some particular models. As I wrote above, 'it’s just another model.' Another way to see this, in the time-series cross-sectional case, is to recognize that there’s no reason to think of group-level coefficients as truly 'fixed'. One example I remember was a regression on some political outcomes, with 40 years of data for each of 50 states, where the analysis included 'fixed effects' for states. I’m sorry but it doesn’t really make sense to think of Vermont from 1960 through 2000 as being 'fixed' in any sense."
+
+> "I just don’t see how setting the group-level variance to infinity can be better than estimating it from the data or setting it to a reasonable finite value. That said, the big advantage of multilevel (“random effects”) modeling comes when you are interested in the varying coefficients themselves, or if you’re interested in predictions for new groups, or if you want the treatment effect itself to vary by group. On a slightly different note, I’m unhappy with many of the time-series cross-sectional analyses I’ve seen because I don’t buy the assumption of constancy over time. That is, I don’t really think those effects are “fixed”!"
+
+> "I don’t know that there’s anything much that’s time-invariant in what I study. But, in any case, the so-called fixed-effects analysis is mathematically a special case of multilevel modeling in which the group-level variance is set to infinity. I agree that there’s no need to “believe” that model for the method to work; however, I think it works because of some implicit additivity assumptions. I’d prefer to (a) allow the group-level variance to be finite, and (b) work in the relevant assumptions more directly."
+
+# References
