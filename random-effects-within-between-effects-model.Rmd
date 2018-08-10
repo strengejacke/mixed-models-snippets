@@ -17,6 +17,15 @@ knitr::opts_chunk$set(
 )
 ```
 
+![cc](cc-attrib-nc.png)
+<!---
+(http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
+--->
+
+This document is licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc-sa/2.5/ca/).
+Please share \& remix noncommercially, mentioning its origin. Sourcecode and data are available [here](https://github.com/strengejacke/mixed-models-snippets).
+
 ## The violation of the Gauss-Markov-assumption in RE-models
 
 This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as "fixed" over a long time period. Apart from this, there are more shortcomings of FE-models as well, see [@bell_fixed_2018] and [@bell_understanding_2018].
