@@ -83,7 +83,7 @@ Now we have:
   * `x_tv_gm` : time-varying variable with the mean of `x_tv` accross all time-points, for each patient (ID).
   * `x_tv_dm` : the de-meaned time-varying variable `x_tv`
 
-`QoL_m` and `QoL_gm` are used to test different FE-models, 
+`QoL_m` and `QoL_gm` are used to test different FE-models, which are described later. In those models, I also use a "de-meaned" response variable without the group-variable (`ID`) as fixed effect (see Equation 6 in the paper).
 
 ## The complex random-effect-within-between model (REWB)
 
