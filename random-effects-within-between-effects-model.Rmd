@@ -19,11 +19,11 @@ knitr::opts_chunk$set(
 
 ## The violation of the Gauss-Markov-assumption in RE-models
 
-This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are the gold-standard for these cases, however, it often  makes no sense to consider group-effects as "fixed" over a long time period. Apart from this, there are more shortcomings of FE-models as well, see [@bell_fixed_2018] and [@bell_understanding_2018].
+This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as "fixed" over a long time period. Apart from this, there are more shortcomings of FE-models as well, see [@bell_fixed_2018] and [@bell_understanding_2018].
 
-The following equations and discussion on FE vs. RE is based on [@bell_fixed_2018]. Further  discussion on FE vs. RE, also at the end of this document, refer to [@gelman_data_2007] and [@bafumi_fitting_2006].
+The following equations and discussion on FE vs. RE are based on [@bell_fixed_2018]. Further  discussion on FE vs. RE, also at the end of this document, refer to [@gelman_data_2007] and [@bafumi_fitting_2006].
 
-The solution to the critics from "FE-modelers" is simple: If you include a group mean of your variables in a random effects model,it will give the same answer as a fixed effects model (see second table very below, and [@bell_understanding_2018] as reference). This is why FE-modelers often call this type of RE-model also a "kind of" FE-model. However,
+The solution to the critics from "FE-modelers" is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see  table 3 very below, and [@bell_understanding_2018] as reference). This is why FE-modelers often call this type of RE-model also a "kind of" FE-model. However,
 
 > "Calling it a FE model is not just inaccurate. It also does down its potential. Eg FE models don’t usually include random slopes, and failing to do so can lead to incorrect SEs as well as being a less interesting and realistic model."
 
@@ -83,6 +83,7 @@ Now we have:
   * `x_tv_gm` : time-varying variable with the mean of `x_tv` accross all time-points, for each patient (ID).
   * `x_tv_dm` : the de-meaned time-varying variable `x_tv`
 
+`QoL_m` and `QoL_gm` are used to test different FE-models, 
 
 ## The complex random-effect-within-between model (REWB)
 
@@ -103,6 +104,12 @@ m2 <- lmer(
   control = lmerControl(check.nobs.vs.nRE = "ignore")
 )
 
+# An alternative could be to model the random effects as not correlated.
+# m2b <- lmer(
+#   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
+#   data = d
+# )
+
 # here we get not error message, model runs fine...
 m3 <- lmer(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
@@ -112,6 +119,8 @@ m3 <- lmer(
 ```
 
 We compare both model fits, but we go on with `m3` for now...
+
+#### Table 1: Comparison of complex REWB-Models
 
 ```{r message=FALSE}
 tab_model(
@@ -160,7 +169,9 @@ m6 <- lmer(
 
 ## Comparison of models
 
-Here we compare the "classical" RE-model, the complex REWB-model, the "simple" REWB-model and the Mundlak-Model.
+In table 2, we compare the "classical" RE-model, the complex REWB-model, the "simple" REWB-model and the Mundlak-Model.
+
+#### Table 2: Comparison of RE, REWB and Mundlak Models
 
 ```{r message=FALSE}
 tab_model(
@@ -210,6 +221,8 @@ m10 <- lmer(
 ```
 
 As we can see, the estimates of the (first) FE-model and the RE-model are identical. The second FE-Model, where the response was de-meaned, has a very slight difference in the estimates, the third FE-model (with Intercept) has the same estimates again.
+
+#### Table 3: Comparison of FE- and RE-models
 
 ```{r message=FALSE}
 tab_model(

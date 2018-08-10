@@ -130,9 +130,9 @@ $(document).ready(function () {
 
 <div id="the-violation-of-the-gauss-markov-assumption-in-re-models" class="section level2">
 <h2>The violation of the Gauss-Markov-assumption in RE-models</h2>
-<p>This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are the gold-standard for these cases, however, it often makes no sense to consider group-effects as “fixed” over a long time period. Apart from this, there are more shortcomings of FE-models as well, see <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span>.</p>
-<p>The following equations and discussion on FE vs. RE is based on <span class="citation">(Bell, Fairbrother, and Jones 2018)</span>. Further discussion on FE vs. RE, also at the end of this document, refer to <span class="citation">(Gelman and Hill 2007)</span> and <span class="citation">(Bafumi and Gelman 2006)</span>.</p>
-<p>The solution to the critics from “FE-modelers” is simple: If you include a group mean of your variables in a random effects model,it will give the same answer as a fixed effects model (see second table very below, and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span> as reference). This is why FE-modelers often call this type of RE-model also a “kind of” FE-model. However,</p>
+<p>This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as “fixed” over a long time period. Apart from this, there are more shortcomings of FE-models as well, see <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span>.</p>
+<p>The following equations and discussion on FE vs. RE are based on <span class="citation">(Bell, Fairbrother, and Jones 2018)</span>. Further discussion on FE vs. RE, also at the end of this document, refer to <span class="citation">(Gelman and Hill 2007)</span> and <span class="citation">(Bafumi and Gelman 2006)</span>.</p>
+<p>The solution to the critics from “FE-modelers” is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see table 3 very below, and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span> as reference). This is why FE-modelers often call this type of RE-model also a “kind of” FE-model. However,</p>
 <blockquote>
 <p>“Calling it a FE model is not just inaccurate. It also does down its potential. Eg FE models don’t usually include random slopes, and failing to do so can lead to incorrect SEs as well as being a less interesting and realistic model.”</p>
 </blockquote>
@@ -183,6 +183,7 @@ d &lt;- d %&gt;%
 <li><code>x_tv_gm</code> : time-varying variable with the mean of <code>x_tv</code> accross all time-points, for each patient (ID).</li>
 <li><code>x_tv_dm</code> : the de-meaned time-varying variable <code>x_tv</code></li>
 </ul>
+<p><code>QoL_m</code> and <code>QoL_gm</code> are used to test different FE-models,</p>
 </div>
 <div id="the-complex-random-effect-within-between-model-rewb" class="section level2">
 <h2>The complex random-effect-within-between model (REWB)</h2>
@@ -198,6 +199,12 @@ m2 &lt;- lmer(
   control = lmerControl(check.nobs.vs.nRE = &quot;ignore&quot;)
 )
 
+# An alternative could be to model the random effects as not correlated.
+# m2b &lt;- lmer(
+#   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
+#   data = d
+# )
+
 # here we get not error message, model runs fine...
 m3 &lt;- lmer(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
@@ -205,6 +212,8 @@ m3 &lt;- lmer(
   data = d
 )</code></pre>
 <p>We compare both model fits, but we go on with <code>m3</code> for now…</p>
+<div id="table-1-comparison-of-complex-rewb-models" class="section level4">
+<h4>Table 1: Comparison of complex REWB-Models</h4>
 <pre class="r"><code>tab_model(
   m2, m3,
   show.ci = FALSE, 
@@ -468,7 +477,7 @@ Random Effects
 ρ<sub>01</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
--0.77 <sub>ID</sub>
+-0.77 <sub>ID.time</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 -1.00 <sub>ID</sub>
@@ -477,7 +486,7 @@ Random Effects
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
- 
+0.36 <sub>ID.x_tv_dm</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 1.00 <sub>ID.1</sub>
@@ -507,6 +516,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <table style="border-collapse:collapse; border:none;">
 </div>
 </div>
+</div>
 <div id="the-simple-random-effect-within-between-model-rewb-and-mundlak-model" class="section level2">
 <h2>The simple random-effect-within-between model (REWB) and Mundlak model</h2>
 <p>After email correspondance, the paper’s authors suggest that, depending on the research interest and necessary complexity of the model, a “simple” random-slope might be suitable as well. As stated in the paper, this is useful if homogenity across level-2 units is assumed. This model usually yields the same results as a FE-model, however, we additionally have information about the random effects - and the model can incorporate time-invariant covariates.</p>
@@ -534,7 +544,9 @@ m5 &lt;- lmer(
 </div>
 <div id="comparison-of-models" class="section level2">
 <h2>Comparison of models</h2>
-<p>Here we compare the “classical” RE-model, the complex REWB-model, the “simple” REWB-model and the Mundlak-Model.</p>
+<p>In table 2, we compare the “classical” RE-model, the complex REWB-model, the “simple” REWB-model and the Mundlak-Model.</p>
+<div id="table-2-comparison-of-re-rewb-and-mundlak-models" class="section level4">
+<h4>Table 2: Comparison of RE, REWB and Mundlak Models</h4>
 <pre class="r"><code>tab_model(
   m1, m3, m4, m6,
   show.ci = FALSE, 
@@ -1066,6 +1078,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 </tr>
 <table style="border-collapse:collapse; border:none;">
 </div>
+</div>
 <div id="check-if-a-rewb--or-simple-re-model-suitable" class="section level2">
 <h2>Check if a REWB- or simple RE-model suitable</h2>
 <p>If the estimates of the within- and between-effect (<code>x_tv_dm</code> and <code>x_tv_gm</code>) are (almost) identical, or if the contextual effect (<code>x_tv_gm</code>) in the <strong>Mundlak</strong>-model is zero and doesn’t give a significant improvement for the model, you can also use a simple RE-model.</p>
@@ -1106,6 +1119,8 @@ m10 &lt;- lmer(
   data = d
 )</code></pre>
 <p>As we can see, the estimates of the (first) FE-model and the RE-model are identical. The second FE-Model, where the response was de-meaned, has a very slight difference in the estimates, the third FE-model (with Intercept) has the same estimates again.</p>
+<div id="table-3-comparison-of-fe--and-re-models" class="section level4">
+<h4>Table 3: Comparison of FE- and RE-models</h4>
 <pre class="r"><code>tab_model(
   m7, m8, m9, m10, 
   show.ci = FALSE, 
@@ -7411,6 +7426,7 @@ R<sup>2</sup> / adjusted R<sup>2</sup>
 </td>
 </tr>
 <table style="border-collapse:collapse; border:none;">
+</div>
 </div>
 <div id="further-critics-of-the-fe-approach" class="section level2">
 <h2>Further critics of the FE-approach</h2>
