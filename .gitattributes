@@ -1,3 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 *.html linguist-vendored
+*.md linguist-vendored
+*.bib linguist-vendored
