@@ -110,10 +110,18 @@ m2 <- lmer(
 #   data = d
 # )
 
-# here we get not error message, model runs fine...
+# here we get no error message, model runs fine...
 m3 <- lmer(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
     (1 + time | ID) + (1 + x_tv_dm | ID),
+  data = d
+)
+
+# an alternative would be to assume independence between random slopes
+# and no covariance...
+m3a <- lmer(
+  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
+    (1 + time | ID) + (0 + x_tv_dm | ID),
   data = d
 )
 ```
@@ -124,13 +132,13 @@ We compare both model fits, but we go on with `m3` for now...
 
 ```{r message=FALSE}
 tab_model(
-  m2, m3,
+  m2, m3, m3a,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
   string.se = "SE",
   show.icc = FALSE,
-  dv.labels = c("Complex REWB (1)", "Complex REWB (2)")
+  dv.labels = c("Complex REWB (1)", "Complex REWB (2)", "Complex REWB (3)")
 )
 ```
 
