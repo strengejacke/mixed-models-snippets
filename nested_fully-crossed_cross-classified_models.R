@@ -11,8 +11,12 @@
 
 lmer(DV ~ IV + (1 + IV | Cluster / Subject), data = ...)
 
+# which expands to...
 
-# Fully-crossed or cross-classified models
+lmer(DV ~ IV + (1 + IV | Cluster ) + (1 + IV | Cluster:Subject), data = ...)
+
+
+# Fully-crossed or cross-classified models ----
 
 # If each "Subject" receives the same "Cluster", it is a fully crossed
 # random factors design. If there is some mixture it is cross-classified
