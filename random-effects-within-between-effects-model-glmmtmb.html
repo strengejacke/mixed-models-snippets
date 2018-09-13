@@ -143,7 +143,7 @@ $(document).ready(function () {
 <p>source: <a href="https://twitter.com/AndrewJDBell/status/1026764338370105344">Twitter-Discussion</a></p>
 <p>This code snippet shows how to translate the Equations from <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> into R-code, using <code>glmmTMB()</code> from the <strong>glmmTMB</strong>-package.</p>
 <pre class="r"><code>library(glmmTMB)
-library(dplyr)
+library(sjmisc)
 library(sjPlot)
 
 load(&quot;example.RData&quot;)</code></pre>
@@ -173,22 +173,13 @@ load(&quot;example.RData&quot;)</code></pre>
 <p>Next is a model from Eq. 10, which includes the <em>“de-meaned”</em> time-varying variable as well as the <em>“group-meaned”</em> time-varying variable.</p>
 <pre class="r"><code># compute mean of &quot;x_tv&quot; for each subject (ID) and
 # then &quot;de-mean&quot; x_tv
-
-d &lt;- d %&gt;%
-  group_by(ID) %&gt;%
-  mutate(
-    x_tv_gm = mean(x_tv, na.rm = T),
-    x_tv_dm = x_tv - x_tv_gm,
-    QoL_m = mean(QoL, na.rm = T),
-    QoL_gm = QoL - QoL_m
-  ) %&gt;%
-  ungroup()</code></pre>
+d &lt;- de_mean(d, x_tv, QoL, grp = ID)</code></pre>
 <p>Now we have:</p>
 <ul>
 <li><code>x_tv_gm</code> : time-varying variable with the mean of <code>x_tv</code> accross all time-points, for each patient (ID).</li>
 <li><code>x_tv_dm</code> : the de-meaned time-varying variable <code>x_tv</code></li>
 </ul>
-<p><code>QoL_m</code> and <code>QoL_gm</code> are used to test different FE-models, which are described later. In those models, I also use a “de-meaned” response variable without the group-variable (<code>ID</code>) as fixed effect (see Equation 6 in the paper).</p>
+<p><code>QoL_gm</code> and <code>QoL_dm</code> are used to test different FE-models, which are described later. In those models, I also use a “de-meaned” response variable without the group-variable (<code>ID</code>) as fixed effect (see Equation 6 in the paper).</p>
 </div>
 <div id="the-complex-random-effect-within-between-model-rewb" class="section level2">
 <h2>The complex random-effect-within-between model (REWB)</h2>
@@ -529,7 +520,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 0.377 / 0.615
 </td>
 </tr>
-<table style="border-collapse:collapse; border:none;">
+</table>
 </div>
 </div>
 </div>
@@ -1080,7 +1071,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 0.382 / 0.649
 </td>
 </tr>
-<table style="border-collapse:collapse; border:none;">
+</table>
 </div>
 </div>
 <div id="check-if-a-rewb--or-simple-re-model-suitable" class="section level2">
@@ -1108,12 +1099,12 @@ m7 &lt;- lm(
 
 # Model from Equation 6
 m8 &lt;- lm(
-  QoL_gm ~ 0 + time + x_tv_dm,
+  QoL_dm ~ 0 + time + x_tv_dm,
   data = d
 )
 
 m9 &lt;- lm(
-  QoL_gm ~ time + x_tv_dm,
+  QoL_dm ~ time + x_tv_dm,
   data = d
 )
 
@@ -7429,7 +7420,7 @@ R<sup>2</sup> / adjusted R<sup>2</sup>
 0.369 / 0.615
 </td>
 </tr>
-<table style="border-collapse:collapse; border:none;">
+</table>
 </div>
 </div>
 <div id="further-critics-of-the-fe-approach" class="section level2">
