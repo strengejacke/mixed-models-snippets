@@ -1,7 +1,7 @@
 ---
 title: "Fixed and Random Effects Models"
 author: "Daniel Lüdecke"
-date: "9 August 2018"
+date: "13 September 2018"
 output: 
   html_document: 
     theme: cerulean
@@ -42,8 +42,8 @@ This code snippet shows how to translate the Equations from [@bell_fixed_2018] i
 
 ```{r message=FALSE}
 library(lme4)
-library(dplyr)
 library(sjPlot)
+library(sjmisc)
 
 load("example.RData")
 ```
@@ -75,16 +75,7 @@ Next is a model from Eq. 10, which includes the _"de-meaned"_ time-varying varia
 ```{r}
 # compute mean of "x_tv" for each subject (ID) and
 # then "de-mean" x_tv
-
-d <- d %>%
-  group_by(ID) %>%
-  mutate(
-    x_tv_gm = mean(x_tv, na.rm = T),
-    x_tv_dm = x_tv - x_tv_gm,
-    QoL_m = mean(QoL, na.rm = T),
-    QoL_gm = QoL - QoL_m
-  ) %>%
-  ungroup()
+d <- de_mean(d, x_tv, QoL, grp = ID)
 ```
 
 Now we have:
@@ -92,7 +83,7 @@ Now we have:
   * `x_tv_gm` : time-varying variable with the mean of `x_tv` accross all time-points, for each patient (ID).
   * `x_tv_dm` : the de-meaned time-varying variable `x_tv`
 
-`QoL_m` and `QoL_gm` are used to test different FE-models, which are described later. In those models, I also use a "de-meaned" response variable without the group-variable (`ID`) as fixed effect (see Equation 6 in the paper).
+`QoL_gm` and `QoL_dm` are used to test different FE-models, which are described later. In those models, I also use a "de-meaned" response variable without the group-variable (`ID`) as fixed effect (see Equation 6 in the paper).
 
 ## The complex random-effect-within-between model (REWB)
 
@@ -214,12 +205,12 @@ m7 <- lm(
 
 # Model from Equation 6
 m8 <- lm(
-  QoL_gm ~ 0 + time + x_tv_dm,
+  QoL_dm ~ 0 + time + x_tv_dm,
   data = d
 )
 
 m9 <- lm(
-  QoL_gm ~ time + x_tv_dm,
+  QoL_dm ~ time + x_tv_dm,
   data = d
 )
 
