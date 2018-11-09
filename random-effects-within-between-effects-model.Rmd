@@ -1,7 +1,7 @@
 ---
 title: "Fixed and Random Effects Models"
 author: "Daniel Lüdecke"
-date: "13 September 2018"
+date: "9 November 2018"
 output: 
   html_document: 
     theme: cerulean
@@ -246,7 +246,7 @@ tab_model(
 
 ## Conclusion
 
-If the Gauss-Markov-assumption is correlated, it's recommended to fit a complex random-effect-within-between model (REWB). This requires de- and group-meaning the time-varying predictors. Depending on the data structure, random slope and intercept may correlate or not.
+If the Gauss-Markov-assumption is violated, it's recommended to fit a complex random-effect-within-between model (REWB). This requires de- and group-meaning the time-varying predictors. Depending on the data structure, random slope and intercept may correlate or not.
 
 ```{r}
 # compute group-mean of "x_tv" for each subject (ID) and
