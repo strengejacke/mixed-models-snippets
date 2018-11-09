@@ -108,6 +108,7 @@ m2 <- glmmTMB(
 # An alternative could be to model the random effects as not correlated.
 m3 <- glmmTMB(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
+  REML = TRUE,
   data = d
 )
 
@@ -119,6 +120,15 @@ m3 <- glmmTMB(
 #   data = d,
 #   REML = TRUE
 # )
+
+# an alternative would be to assume independence between random slopes
+# and no covariance...
+m3c <- glmmTMB(
+  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti +
+    (1 + time | ID) + (0 + x_tv_dm | ID),
+  data = d,
+  REML = TRUE
+)
 ```
 
 We compare both model fits, but we go on with `m2` for now... Note that in the [same examples with `lmer()`](random-effects-within-between-effects-model.html), we took `m3` where the random parts were `(1 + time | ID) + (1 + x_tv_dm | ID)`, like in the above model `m3b` - however, model `m3b` has serious problems with calculating the standard errors.
@@ -127,13 +137,13 @@ We compare both model fits, but we go on with `m2` for now... Note that in the [
 
 ```{r message=FALSE}
 tab_model(
-  m2, m3,
+  m2, m3, m3c,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
   string.se = "SE",
   show.icc = FALSE,
-  dv.labels = c("Complex REWB (1)", "Complex REWB (2)")
+  dv.labels = c("Complex REWB (1)", "Complex REWB (2)", "Complex REWB (3)")
 )
 ```
 
