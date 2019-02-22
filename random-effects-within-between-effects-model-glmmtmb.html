@@ -11,7 +11,7 @@
 
 <meta name="author" content="Daniel Lüdecke" />
 
-<meta name="date" content="2018-08-09" />
+<meta name="date" content="2019-02-22" />
 
 <title>Fixed and Random Effects Models</title>
 
@@ -283,6 +283,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -290,14 +293,74 @@ button.code-folding-btn:focus {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -309,7 +372,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Fixed and Random Effects Models</h1>
 <h4 class="author"><em>Daniel Lüdecke</em></h4>
-<h4 class="date"><em>9 August 2018</em></h4>
+<h4 class="date"><em>22 Feb 2019</em></h4>
 
 </div>
 
@@ -322,12 +385,22 @@ $(document).ready(function () {
 <h2>The violation of the Gauss-Markov-assumption in RE-models</h2>
 <p>This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as “fixed” over a long time period. Apart from this, there are more shortcomings of FE-models as well, see <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span>.</p>
 <p>The following equations and discussion on FE vs. RE are based on <span class="citation">(Bell, Fairbrother, and Jones 2018)</span>. Further discussion on FE vs. RE, also at the end of this document, refer to <span class="citation">(Gelman and Hill 2007)</span> and <span class="citation">(Bafumi and Gelman 2006)</span>.</p>
+<div id="adding-group-meaned-predictors-to-solve-this-issue" class="section level3">
+<h3>Adding group meaned predictors to solve this issue</h3>
 <p>The solution to the critics from “FE-modelers” is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see table 3 very below, and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span> as reference). This is why FE-modelers often call this type of RE-model also a “kind of” FE-model. However,</p>
 <blockquote>
 <p>“Calling it a FE model is not just inaccurate. It also does down its potential. Eg FE models don’t usually include random slopes, and failing to do so can lead to incorrect SEs as well as being a less interesting and realistic model.”</p>
 </blockquote>
 <p>source: <a href="https://twitter.com/AndrewJDBell/status/1026764338370105344">Twitter-Discussion</a></p>
-<p>This code snippet shows how to translate the Equations from <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> into R-code, using <code>glmmTMB()</code> from the <strong>glmmTMB</strong>-package.</p>
+</div>
+<div id="problems-of-ignoring-random-slopes-in-fixed-effects-models" class="section level3">
+<h3>Problems of ignoring random slopes in Fixed Effects models</h3>
+<p><span class="citation">(Heisig, Schaeffer, and Giesecke 2017)</span> demonstrate how ignoring random slopes, i.e. neglecting “cross-cluster differences in the effects of lower-level controls reduces the precision of estimated context effects, resulting in unnecessarily wide confidence intervals and low statistical power”.</p>
+</div>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>The following code snippets show how to translate the Equations from <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> into R-code, using <code>glmmTMB()</code> from the <strong>glmmTMB</strong>-package.</p>
 <pre class="r"><code>library(glmmTMB)
 library(sjmisc)
 library(sjPlot)
@@ -391,7 +464,7 @@ m3 &lt;- glmmTMB(
 )
 
 # here we get an error message when calling the summary(). The 
-# model can't compute standard errors. So we don't use this model.
+# model can&#39;t compute standard errors. So we don&#39;t use this model.
 # m3b &lt;- glmmTMB(
 #   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
 #     (1 + time | ID) + (1 + x_tv_dm | ID),
@@ -817,7 +890,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 0.395 / 0.713
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-0.413 / 0.692
+NA
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 0.415 / 0.693
@@ -1390,7 +1463,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 #&gt; m1 10 4668.5 4711.9 -2324.3   4648.5                             
 #&gt; m6 11 4654.7 4702.4 -2316.3   4632.7 15.835      1  6.912e-05 ***
 #&gt; ---
-#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <div id="comparison-fe--and-rewb-model" class="section level2">
 <h2>Comparison FE- and REWB-Model</h2>
@@ -7746,13 +7819,16 @@ R<sup>2</sup> / adjusted R<sup>2</sup>
 <p>Bafumi, Joseph, and Andrew Gelman. 2006. “Fitting Multilevel Models When Predictors and Group Effects Correlate.” In. Philadelphia, PA: Annual meeting of the American Political Science Association.</p>
 </div>
 <div id="ref-bell_fixed_2018">
-<p>Bell, Andrew, Malcolm Fairbrother, and Kelvyn Jones. 2018. “Fixed and Random Effects Models: Making an Informed Choice.” <em>Quality &amp; Quantity</em>. <a href="https://doi.org/10.1007/s11135-018-0802-x" class="uri">https://doi.org/10.1007/s11135-018-0802-x</a>.</p>
+<p>Bell, Andrew, Malcolm Fairbrother, and Kelvyn Jones. 2018. “Fixed and Random Effects Models: Making an Informed Choice.” <em>Quality &amp; Quantity</em>. <a href="https://doi.org/10.1007/s11135-018-0802-x">https://doi.org/10.1007/s11135-018-0802-x</a>.</p>
 </div>
 <div id="ref-bell_understanding_2018">
-<p>Bell, Andrew, Kelvyn Jones, and Malcolm Fairbrother. 2018. “Understanding and Misunderstanding Group Mean Centering: A Commentary on Kelley et Al.’s Dangerous Practice.” <em>Quality &amp; Quantity</em> 52 (5): 2031–6. <a href="https://doi.org/10.1007/s11135-017-0593-5" class="uri">https://doi.org/10.1007/s11135-017-0593-5</a>.</p>
+<p>Bell, Andrew, Kelvyn Jones, and Malcolm Fairbrother. 2018. “Understanding and Misunderstanding Group Mean Centering: A Commentary on Kelley et Al.’s Dangerous Practice.” <em>Quality &amp; Quantity</em> 52 (5): 2031–6. <a href="https://doi.org/10.1007/s11135-017-0593-5">https://doi.org/10.1007/s11135-017-0593-5</a>.</p>
 </div>
 <div id="ref-gelman_data_2007">
 <p>Gelman, Andrew, and Jennifer Hill. 2007. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Analytical Methods for Social Research. Cambridge ; New York: Cambridge University Press.</p>
+</div>
+<div id="ref-heisig_costs_2017">
+<p>Heisig, Jan Paul, Merlin Schaeffer, and Johannes Giesecke. 2017. “The Costs of Simplicity: Why Multilevel Models May Benefit from Accounting for Cross-Cluster Differences in the Effects of Controls.” <em>American Sociological Review</em> 82 (4): 796–827. <a href="https://doi.org/10.1177/0003122417717901">https://doi.org/10.1177/0003122417717901</a>.</p>
 </div>
 </div>
 </div>
