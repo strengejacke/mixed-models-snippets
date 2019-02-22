@@ -1,7 +1,7 @@
 ---
 title: "Fixed and Random Effects Models"
 author: "Daniel Lüdecke"
-date: "9 August 2018"
+date: "22 Feb 2019"
 output: 
   html_document: 
     theme: cerulean
@@ -12,6 +12,7 @@ bibliography: random-effects-within-between-effects-model.bib
 knitr::opts_chunk$set(
   echo = TRUE,
   collapse = TRUE, 
+  warning = FALSE,
   comment = "#>", 
   dev = "png"
 )
@@ -32,18 +33,27 @@ This example shows how to address the issue of correlating predictors (fixed eff
 
 The following equations and discussion on FE vs. RE are based on [@bell_fixed_2018]. Further  discussion on FE vs. RE, also at the end of this document, refer to [@gelman_data_2007] and [@bafumi_fitting_2006].
 
+### Adding group meaned predictors to solve this issue
+
 The solution to the critics from "FE-modelers" is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see  table 3 very below, and [@bell_understanding_2018] as reference). This is why FE-modelers often call this type of RE-model also a "kind of" FE-model. However,
 
 > "Calling it a FE model is not just inaccurate. It also does down its potential. Eg FE models don’t usually include random slopes, and failing to do so can lead to incorrect SEs as well as being a less interesting and realistic model."
 
 source: [Twitter-Discussion](https://twitter.com/AndrewJDBell/status/1026764338370105344)
 
-This code snippet shows how to translate the Equations from [@bell_fixed_2018] into R-code, using `glmmTMB()` from the **glmmTMB**-package.
+### Problems of ignoring random slopes in Fixed Effects models
+
+[@heisig_costs_2017] demonstrate how ignoring random slopes, i.e. neglecting "cross-cluster differences in the effects of lower-level controls reduces the precision of estimated context effects, resulting in unnecessarily wide confidence intervals and low statistical power".
+
+## Examples
+
+The following code snippets show how to translate the Equations from [@bell_fixed_2018] into R-code, using `glmmTMB()` from the **glmmTMB**-package.
 
 ```{r message=FALSE}
 library(glmmTMB)
 library(sjmisc)
 library(sjPlot)
+library(lfe)
 
 load("example.RData")
 ```
@@ -131,7 +141,7 @@ m3c <- glmmTMB(
 )
 ```
 
-We compare both model fits, but we go on with `m2` for now... Note that in the [same examples with `lmer()`](random-effects-within-between-effects-model.html), we took `m3` where the random parts were `(1 + time | ID) + (1 + x_tv_dm | ID)`, like in the above model `m3b` - however, model `m3b` has serious problems with calculating the standard errors.
+We compare all model fits, but we go on with `m2` for now... Note that in the [same examples with `lmer()`](random-effects-within-between-effects-model.html), we took `m3` where the random parts were `(1 + time | ID) + (1 + x_tv_dm | ID)`, like in the above model `m3b` - however, model `m3b` has serious problems with calculating the standard errors.
 
 #### Table 1: Comparison of complex REWB-Models
 
@@ -212,44 +222,60 @@ anova(m1, m6)
 
 ## Comparison FE- and REWB-Model
 
+The funtion `felm()` from the package **lfe** was used to compute the fixed effects regression models. Base R's `lm()` gives the same result, however, the output is much longer due to the ID-parameters.
+
 ```{r}
 # Model from Equation 5
-m7 <- lm(
-  QoL ~ 0 + time + x_tv_dm + ID,
+m7 <- felm(
+  QoL ~ time + x_tv_dm | ID,
   data = d
 )
+
+# same as this lm-model
+# m7a <- lm(
+#   QoL ~ 0 + time + x_tv_dm + ID,
+#   data = d
+# )
 
 # Model from Equation 6
-m8 <- lm(
-  QoL_dm ~ 0 + time + x_tv_dm,
-  data = d
-)
-
-m9 <- lm(
+m8 <- felm(
   QoL_dm ~ time + x_tv_dm,
   data = d
 )
 
-m10 <- glmmTMB(
+# or ...
+# m8 <- lm(
+#   QoL_dm ~ 0 + time + x_tv_dm,
+#   data = d
+# )
+
+m9 <- glmmTMB(
   QoL ~ time + x_tv_dm + x_tv_gm + (1 | ID),
+  data = d,
+  REML = TRUE
+)
+
+# Compare with complex REWB-model
+m10 <- glmmTMB(
+  QoL ~ time + x_tv_dm + x_tv_gm + (1 + time + x_tv_dm | ID),
   data = d,
   REML = TRUE
 )
 ```
 
-As we can see, the estimates of the (first) FE-model and the RE-model are identical. The second FE-Model, where the response was de-meaned, has a very slight difference in the estimates, the third FE-model (with Intercept) has the same estimates again.
+As we can see, the estimates of the FE-models and the RE-model are identical.
 
 #### Table 3: Comparison of FE- and RE-models
 
 ```{r message=FALSE}
 tab_model(
-  m7, m8, m9, m10, 
+  m7, m8, m9, m10,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
   string.se = "SE",
   show.icc = FALSE,
-  dv.labels = c("FE-model with ID", "FE, de-meaned Y", "FE, with Intercept", "RE")
+  dv.labels = c("FE-model with ID", "FE, de-meaned Y (with Intercept)", "RE", "Complex REWB")
 )
 ```
 
