@@ -263,7 +263,7 @@ m10 <- glmmTMB(
 )
 ```
 
-As we can see, the estimates of the FE-models and the RE-model are identical.
+As we can see, the estimates of the FE-models and the RE-model are identical. However, the estimates from the REWB-model differ. This is because the time-varying predictors, the within-subject effect `x_tv_dm`, is allowed to vary between subjects as well (i.e. it is modelled as random slope).
 
 #### Table 3: Comparison of FE- and RE-models
 
@@ -278,6 +278,39 @@ tab_model(
   dv.labels = c("FE-model with ID", "FE, de-meaned Y (with Intercept)", "RE", "Complex REWB")
 )
 ```
+
+## Conclusion
+
+If the Gauss-Markov-assumption is violated, i.e. when group factors (random effects) and time-varying predictors correlate, it's recommended to fit a complex random-effect-within-between model (REWB) instead of a "simple" mixed effects model. This requires de- and group-meaning the time-varying predictors. Depending on the data structure, random slope and intercept may correlate or not.
+
+The random effects structure, i.e. how to model random slopes and intercepts and allow correlations among them, depends on the nature of the data. The benefits from using mixed effects models over fixed effects models are more precise estimates (in particular when random slopes are included) and the possibility to include between-subjects effects.
+
+In case of convergence problems or singular fits, note that changing the optimizer might help. In this context, some models ran fine in [**lme4**](random-effects-within-between-effects-model.html), while other models that had problems being fitted in _lme4_ ran without any problems in _glmmTMB_.
+
+```{r}
+# compute group-mean of "x_tv" for each subject (ID) and
+# then "de-mean" x_tv
+d <- de_mean(d, x_tv, QoL, grp = ID)
+
+# This model gives a convergence warning:
+# Model convergence problem; singular convergence (7)
+m <- glmmTMB(
+  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm | ID),
+  data = d,
+  REML = TRUE
+)
+
+# An alternative could be to model the random effects as not correlated.
+m <- glmmTMB(
+  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
+  REML = TRUE,
+  data = d
+)
+```
+
+* `x_tv_dm` indicates the _within-subject_ effect
+* `x_tv_gm` indicates the _between-subject_ effect
+* `z1_ti` and `z2_ti` also indicate a _between-subject_ effect
 
 ## Further critics of the FE-approach
 
