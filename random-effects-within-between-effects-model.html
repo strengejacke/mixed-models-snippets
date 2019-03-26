@@ -911,7 +911,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <div id="the-simple-random-effect-within-between-model-rewb-and-mundlak-model" class="section level2">
 <h2>The simple random-effect-within-between model (REWB) and Mundlak model</h2>
 <p>After email correspondance, the paper’s authors suggest that, depending on the research interest and necessary complexity of the model, a “simple” random-slope might be suitable as well. As stated in the paper, this is useful if homogenity across level-2 units is assumed. This model usually yields the same results as a FE-model, however, we additionally have information about the random effects - and the model can incorporate time-invariant covariates.</p>
-<p>Yet, I’m a bit unsure whether <code>x_tv_dm</code> should also be included as random-slope in this simpler model. Again, the estimate of <code>x_tv_dm</code> indicates the within-subject effect, while the estimate of <code>x_tv_gm</code> indicates the between-subject effect.</p>
+<p>Again, the estimate of <code>x_tv_dm</code> indicates the within-subject effect, while the estimate of <code>x_tv_gm</code> indicates the between-subject effect.</p>
 <div id="model-from-equation-2" class="section level3">
 <h3>Model from Equation 2</h3>
 <p>y<sub>it</sub> = β<sub>0</sub> + β<sub>1W</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + β<sub>2B</sub> ͞x<sub>i</sub> + β<sub>3</sub> z<sub>i</sub> + (υ<sub>i</sub> + ε<sub>it</sub>)</p>
@@ -928,6 +928,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
   QoL ~ time + age + x_tv + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
   data = d
 )</code></pre>
+<p>The contextual effect, i.e. the coefficient for <code>x_tv_gm</code>, indicates the effect of an individual (at level 1) that moves from one level-2 group into another one. In the above model, or in general: in case of longitudinal data, the contextual effect is meaningless, as level-2 predictors are individuals (or subjects) themselves, and by definition cannot “move” to another individual. Therefor, the REWB-model is more informative.</p>
 </div>
 </div>
 <div id="comparison-of-models" class="section level2">
@@ -1470,6 +1471,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <div id="check-if-a-rewb--or-simple-re-model-suitable" class="section level2">
 <h2>Check if a REWB- or simple RE-model suitable</h2>
 <p>If the estimates of the within- and between-effect (<code>x_tv_dm</code> and <code>x_tv_gm</code>) are (almost) identical, or if the contextual effect (<code>x_tv_gm</code>) in the <strong>Mundlak</strong>-model is zero and doesn’t give a significant improvement for the model, you can also use a simple RE-model.</p>
+<p>A simple way to check this is a likelihood-ratio test between the simple RE-model and the Mundlak-model:</p>
 <pre class="r"><code>anova(m1, m5)
 #&gt; refitting model(s) with ML (instead of REML)
 #&gt; Data: d
@@ -1482,6 +1484,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 #&gt; m5 11 4649.5 4697.2 -2313.8   4627.5 15.081      1   0.000103 ***
 #&gt; ---
 #&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Here we see a significant improvement of the Mundlak-model over the simple RE-model, indicating that it makes sense to model within- and between-subjects effects, i.e. to apply a REWB-model.</p>
 </div>
 <div id="comparison-fe--and-rewb-model" class="section level2">
 <h2>Comparison FE- and REWB-Model</h2>

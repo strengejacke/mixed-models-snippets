@@ -174,7 +174,7 @@ tab_model(
 
 After email correspondance, the paper's authors suggest that, depending on the research interest and necessary complexity of the model, a "simple" random-slope might be suitable as well. As stated in the paper, this is useful if homogenity across level-2 units is assumed. This model usually yields the same results as a FE-model, however, we additionally have information about the random effects - and the model can incorporate time-invariant covariates.
 
-Yet, I'm a bit unsure whether `x_tv_dm` should also be included as random-slope in this simpler model. Again, the estimate of `x_tv_dm` indicates the within-subject effect, while the estimate of `x_tv_gm` indicates the between-subject effect.
+Again, the estimate of `x_tv_dm` indicates the within-subject effect, while the estimate of `x_tv_gm` indicates the between-subject effect.
 
 ### Model from Equation 2
 
@@ -209,6 +209,8 @@ m5 <- glmmTMB(
 )
 ```
 
+The contextual effect, i.e. the coefficient for `x_tv_gm`, indicates the effect of an individual (at level 1) that moves from one level-2 group into another one. In the above model, or in general: in case of longitudinal data, the contextual effect is meaningless, as level-2 predictors are individuals (or subjects) themselves, and by definition cannot "move" to another individual. Therefor, the REWB-model is more informative.
+
 ## Comparison of models
 
 In table 2, we compare the "classical" RE-model, the complex REWB-model, the "simple" REWB-model and the Mundlak-Model.
@@ -232,9 +234,13 @@ tab_model(
 
 If the estimates of the within- and between-effect (`x_tv_dm` and `x_tv_gm`) are (almost) identical, or if the contextual effect (`x_tv_gm`) in the **Mundlak**-model is zero and doesn't give a significant improvement for the model, you can also use a simple RE-model.
 
+A simple way to check this is a likelihood-ratio test between the simple RE-model and the Mundlak-model:
+
 ```{r}
 anova(m1, m5)
 ```
+
+Here we see a significant improvement of the Mundlak-model over the simple RE-model, indicating that it makes sense to model within- and between-subjects effects, i.e. to apply a REWB-model.
 
 ## Comparison FE- and REWB-Model
 
