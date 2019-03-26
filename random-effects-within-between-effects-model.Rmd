@@ -8,7 +8,8 @@ output:
 bibliography: random-effects-within-between-effects-model.bib
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE,echo=FALSE}
+library(knitr)
 knitr::opts_chunk$set(
   echo = TRUE,
   collapse = TRUE, 
@@ -85,7 +86,7 @@ Next is a model from Eq. 10, which includes the _"de-meaned"_ time-varying varia
 ```{r}
 # compute mean of "x_tv" for each subject (ID) and
 # then "de-mean" x_tv
-d <- de_mean(d, x_tv, QoL, grp = ID)
+d <- de_mean(d, x_tv, QoL, grp = ID) # from package "sjmisc"
 ```
 
 Now we have:
@@ -104,6 +105,18 @@ Here, the estimate of `x_tv_dm` indicates the _within-subject_ effect, while the
 
 
 ### Model from Equation 10
+
+Here is the equation 10 from Bell et al. 2018:
+
+```{r echo=FALSE}
+f <- "y<sub>it</sub> = &beta;<sub>0</sub> + &beta;<sub>1W</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &beta;<sub>2B</sub> &#x035E;x<sub>i</sub> + &beta;<sub>3</sub> z<sub>i</sub> + &upsilon;<sub>i0</sub> + &upsilon;<sub>i0</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &epsilon;<sub>it</sub>"
+knitr::asis_output(f)
+```
+
+```{r echo=FALSE}
+f <- "<ul><li>x<sub>it</sub> - &#x035E;x<sub>i</sub> is the de-meaned predictor, <em>x_tv_dm</em></li><li>&#x035E;x<sub>i</sub> is the group-meaned predictor, <em>x_tv_gm</em></li><li>&beta;<sub>1W</sub> is the coefficient for x_tv_dm (within-subject)</li><li>&beta;<sub>2B</sub> is the coefficient for x_tv_gm (bewteen-subject)</li><li>&beta;<sub>3</sub> is the coefficient for `z1_ti` or `z2_ti` (bewteen-subject)</li></ul>"
+knitr::asis_output(f)
+```
 
 ```{r}
 # This model this leads to an error (number of observations <= number of 
@@ -136,7 +149,8 @@ m3a <- lmer(
 )
 ```
 
-We compare all model fits, but we go on with `m3` for now...
+
+We compare all model fits, but we go on with `m3` (the second model in the table below) for now...
 
 #### Table 1: Comparison of complex REWB-Models
 
@@ -157,19 +171,19 @@ tab_model(
 
 After email correspondance, the paper's authors suggest that, depending on the research interest and necessary complexity of the model, a "simple" random-slope might be suitable as well. As stated in the paper, this is useful if homogenity across level-2 units is assumed. This model usually yields the same results as a FE-model, however, we additionally have information about the random effects - and the model can incorporate time-invariant covariates.
 
-Yet, I'm a bit unsure whether `time` or `x_tv_dm` should be used as random-slope in this simpler model. I think `m4` is better here. Again, the estimate of `x_tv_dm` indicates the within-subject effect, while the estimate of `x_tv_gm` indicates the between-subject effect.
+Yet, I'm a bit unsure whether `x_tv_dm` should also be included as random-slope in this simpler model. Again, the estimate of `x_tv_dm` indicates the within-subject effect, while the estimate of `x_tv_gm` indicates the between-subject effect.
 
 
 ### Model from Equation 2
 
+```{r echo=FALSE}
+f <- "y<sub>it</sub> = &beta;<sub>0</sub> + &beta;<sub>1W</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &beta;<sub>2B</sub> &#x035E;x<sub>i</sub> + &beta;<sub>3</sub> z<sub>i</sub> + (&upsilon;<sub>i</sub> + &epsilon;<sub>it</sub>)"
+knitr::asis_output(f)
+```
+
 ```{r}
 m4 <- lmer(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
-  data = d
-)
-
-m5 <- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + x_tv_dm | ID),
   data = d
 )
 ```
@@ -178,8 +192,13 @@ An alternativ would be the **Mundlak** model. Here, the estimate of `x_tv` indic
 
 ### Model from Equation 3
 
+```{r echo=FALSE}
+f <- "y<sub>it</sub> = &beta;<sub>0</sub> + &beta;<sub>1W</sub> x<sub>it</sub> + &beta;<sub>2C</sub> &#x035E;x<sub>i</sub> + &beta;<sub>3</sub> z<sub>i</sub> + (&upsilon;<sub>i</sub> + &epsilon;<sub>it</sub>)"
+knitr::asis_output(f)
+```
+
 ```{r}
-m6 <- lmer(
+m5 <- lmer(
   QoL ~ time + age + x_tv + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
   data = d
 )
@@ -193,7 +212,7 @@ In table 2, we compare the "classical" RE-model, the complex REWB-model, the "si
 
 ```{r message=FALSE}
 tab_model(
-  m1, m3, m4, m6,
+  m1, m3, m4, m5,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -209,45 +228,64 @@ tab_model(
 If the estimates of the within- and between-effect (`x_tv_dm` and `x_tv_gm`) are (almost) identical, or if the contextual effect (`x_tv_gm`) in the **Mundlak**-model is zero and doesn't give a significant improvement for the model, you can also use a simple RE-model.
 
 ```{r}
-anova(m1, m6)
+anova(m1, m5)
 ```
 
 ## Comparison FE- and REWB-Model
 
 The funtion `felm()` from the package **lfe** was use to computed the fixed effects regression models. Base R's `lm()` gives the same result, however, the output is much longer due to the ID-parameters.
 
+
+```{r echo=FALSE}
+f <- "y<sub>it</sub> = &beta;<sub>1</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + (&upsilon;<sub>i</sub> + &epsilon;<sub>it</sub>)"
+knitr::asis_output(f)
+```
+
 ```{r}
 # Model from Equation 5
-m7 <- felm(
+m6 <- felm(
   QoL ~ time + x_tv_dm | ID,
   data = d
 )
 
 # same as this lm-model
-# m7a <- lm(
+# m6a <- lm(
 #   QoL ~ 0 + time + x_tv_dm + ID,
 #   data = d
 # )
+```
 
+Equation 6 describes a fixed effects model with de-meaned dependent variable.
+
+```{r echo=FALSE}
+f <- "(y<sub>it</sub> - &#x035E;y<sub>i</sub>) = &beta;<sub>1</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &epsilon;<sub>it</sub>"
+knitr::asis_output(f)
+```
+
+```{r}
 # Model from Equation 6
-m8 <- felm(
+m7 <- felm(
   QoL_dm ~ time + x_tv_dm,
   data = d
 )
 
 # or ...
-# m8 <- lm(
+# m7 <- lm(
 #   QoL_dm ~ 0 + time + x_tv_dm,
 #   data = d
 # )
+```
 
-m9 <- lmer(
+We compare the results from the FE-models with a simple RE-model and the REWB-model.
+
+```{r}
+m8 <- lmer(
   QoL ~ time + x_tv_dm + x_tv_gm + (1 | ID),
   data = d
 )
 
 # Compare with complex REWB-model
-m10 <- lmer(
+m9 <- lmer(
   QoL ~ time + x_tv_dm + x_tv_gm +
     (1 + time | ID) + (1 + x_tv_dm | ID),
   data = d
@@ -260,7 +298,7 @@ As we can see, the estimates of the FE-models and the RE-model are identical. Ho
 
 ```{r message=FALSE}
 tab_model(
-  m7, m8, m9, m10,
+  m6, m7, m8, m9,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -283,21 +321,7 @@ In case of convergence problems or singular fits, note that changing the optimiz
 # then "de-mean" x_tv
 d <- de_mean(d, x_tv, QoL, grp = ID)
 
-# This model this leads to an error (number of observations <= number of 
-# random effects), the check for nobs vs. re is ignored here.
-m <- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm | ID),
-  data = d,
-  control = lmerControl(check.nobs.vs.nRE = "ignore")
-)
-
-# An alternative could be to model the random effects as not correlated.
-m <- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
-  data = d
-)
-
-# here we get no error message, model runs fine...
+# fit complex REWB-model
 m <- lmer(
   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
     (1 + time | ID) + (1 + x_tv_dm | ID),
