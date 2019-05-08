@@ -35,11 +35,13 @@ The following equations and discussion on FE vs. RE are based on [@bell_fixed_20
 
 ### Adding group meaned predictors to solve this issue
 
-The solution to the critics from "FE-modelers" is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see  table 3 very below, and [@bell_understanding_2018] as reference). This is why FE-modelers often call this type of RE-model also a "kind of" FE-model. However,
+The solution to the critics from "FE-modelers" is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see  table 3 very below, and [@bell_understanding_2018] as reference). This is why FE-modelers often call this type of RE-model also a "kind of" FE-model, i.e. they define a RE model as a model where predictors are assumed uncorrelated with the residuals. However,
 
 > "Calling it a FE model is not just inaccurate. It also does down its potential. Eg FE models don’t usually include random slopes, and failing to do so can lead to incorrect SEs as well as being a less interesting and realistic model."
 
-source: [Twitter-Discussion](https://twitter.com/AndrewJDBell/status/1026764338370105344)
+>  "A random effects model is such because it has random effects (that is, higher-level entities treated as a distribution) in it rather than fixed effects (higher-level entities treated as dummy variables) in it."
+
+source: [Twitter-Discussion 1](https://twitter.com/AndrewJDBell/status/1026764338370105344), [Twitter-Discussion 2](https://twitter.com/AndrewJDBell/status/1026764347480178689)
 
 ### Problems of ignoring random slopes in Fixed Effects models
 

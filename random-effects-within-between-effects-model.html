@@ -392,11 +392,14 @@ $(document).ready(function () {
 <p>The following equations and discussion on FE vs. RE are based on <span class="citation">(Bell, Fairbrother, and Jones 2018)</span>. Further discussion on FE vs. RE, also at the end of this document, refer to <span class="citation">(Gelman and Hill 2007)</span> and <span class="citation">(Bafumi and Gelman 2006)</span>.</p>
 <div id="adding-group-meaned-predictors-to-solve-this-issue" class="section level3">
 <h3>Adding group meaned predictors to solve this issue</h3>
-<p>The solution to the critics from “FE-modelers” is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see table 3 very below, and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span> as reference). This is why FE-modelers often call this type of RE-model also a “kind of” FE-model. However,</p>
+<p>The solution to the critics from “FE-modelers” is simple: If you include a group mean of your variables in a random effects model, it will give the same answer as a fixed effects model (see table 3 very below, and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span> as reference). This is why FE-modelers often call this type of RE-model also a “kind of” FE-model, i.e. they define a RE model as a model where predictors are assumed uncorrelated with the residuals. However,</p>
 <blockquote>
 <p>“Calling it a FE model is not just inaccurate. It also does down its potential. Eg FE models don’t usually include random slopes, and failing to do so can lead to incorrect SEs as well as being a less interesting and realistic model.”</p>
 </blockquote>
-<p>source: <a href="https://twitter.com/AndrewJDBell/status/1026764338370105344">Twitter-Discussion</a></p>
+<blockquote>
+<p>“A random effects model is such because it has random effects (that is, higher-level entities treated as a distribution) in it rather than fixed effects (higher-level entities treated as dummy variables) in it.”</p>
+</blockquote>
+<p>source: <a href="https://twitter.com/AndrewJDBell/status/1026764338370105344">Twitter-Discussion 1</a>, <a href="https://twitter.com/AndrewJDBell/status/1026764347480178689">Twitter-Discussion 2</a></p>
 </div>
 <div id="problems-of-ignoring-random-slopes-in-fixed-effects-models" class="section level3">
 <h3>Problems of ignoring random slopes in Fixed Effects models</h3>
@@ -856,7 +859,7 @@ Random Effects
 ρ<sub>01</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
--0.75 <sub>ID.time</sub>
+-0.75
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 -1.00 <sub>ID</sub>
@@ -868,13 +871,26 @@ Random Effects
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-0.36 <sub>ID.x_tv_dm</sub>
+0.36
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 0.50 <sub>ID.1</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
  
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+N
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
 </td>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
@@ -1432,6 +1448,22 @@ Random Effects
  
 </td>
 <tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+N
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
 Observations
 </td>
@@ -1868,14 +1900,30 @@ Random Effects
 0.25 <sub>ID.1</sub>
 </td>
 <tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+N
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
 Observations
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
-NA
+564
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
-NA
+564
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
 564
