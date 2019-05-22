@@ -45,7 +45,7 @@ source: [Twitter-Discussion 1](https://twitter.com/AndrewJDBell/status/102676433
 
 ### Problems of ignoring random slopes in Fixed Effects models
 
-[@heisig_costs_2017] demonstrate how ignoring random slopes, i.e. neglecting "cross-cluster differences in the effects of lower-level controls reduces the precision of estimated context effects, resulting in unnecessarily wide confidence intervals and low statistical power".
+[@heisig_costs_2017] demonstrate how ignoring random slopes, i.e. neglecting "cross-cluster differences in the effects of lower-level controls reduces the precision of estimated context effects, resulting in unnecessarily wide confidence intervals and low statistical power". You may refer to this paper to justify a mixed model with random slopes over "simple" FE-models.
 
 ## Examples
 
@@ -59,6 +59,8 @@ library(lfe)
 
 load("example.RData")
 ```
+
+_Sourcecode and data are available [here](https://github.com/strengejacke/mixed-models-snippets)._
 
 ## Description of the data
 
