@@ -1978,7 +1978,7 @@ NA
 </div>
 <div id="comparison-with-the-panelr-package" class="section level2">
 <h2>Comparison with the panelr-package</h2>
-<p>The <a href="https://panelr.jacob-long.com/">panelr-package</a> provides functions to fit models similar to those suggested by Bell et al. 2018, especially the “simple REWB model” (<code>m4</code>) and the Mundlak-model (<code>m5</code>).</p>
+<p>The <a href="https://panelr.jacob-long.com/">panelr-package</a> provides functions to fit models similar to those suggested by Bell et al. 2018, especially the “simple REWB model” (<code>m4</code>) and the Mundlak-model (<code>m5</code>). For the complex REWB model (<code>m3</code>), I needed some slight modification when using <code>panelr::wmb()</code>, which is similar to the above model <code>m2</code>.</p>
 <p>Here we compare the results from <code>panelr::wsb()</code> with our previous models <code>m3</code> (complex REWB), <code>m4</code> (simple REWB) and <code>m5</code> (Mundlak).</p>
 <p><strong>Note:</strong> Since <em>panelr</em> is not yet supported by <em>sjPlot</em>, the result from <code>tidy()</code> is printed as HTML-table below.</p>
 <pre class="r"><code>library(panelr)
@@ -1988,22 +1988,29 @@ library(dplyr)
 # prepare the data for processing with &quot;panelr&quot;
 pd &lt;- panel_data(d, id = ID, wave = time)
 
+# the complex REWB-model
+mp3 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time  | (time + x_tv | ID), 
+           data = pd, 
+           control = lmerControl(check.nobs.vs.nRE = &quot;ignore&quot;))
+
 # the simple REWB-model
-mp4 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd)
+mp4 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd)
 
 # the Mundlak model
-mp5 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd, model = &quot;contextual&quot;)
+mp5 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd, model = &quot;contextual&quot;)
 
-tab &lt;- tidy(mp4) %&gt;% 
-  bind_cols(tidy(mp5)) %&gt;% 
-  select(-statistic, -statistic1, -group1, -term1) %&gt;% 
+tab &lt;- tidy(mp3) %&gt;% 
+  left_join(tidy(mp4), by = &quot;term&quot;) %&gt;% 
+  left_join(tidy(mp5), by = &quot;term&quot;) %&gt;% 
+  select(-statistic, -statistic.x, -statistic.y, -group, -group.x, -group.y) %&gt;% 
   round_num(2)
 
 # print models side-by-side
 tab_df(
-  tab[, c(5, 1, 2, 3, 4, 6, 7, 8)],
+  tab[1:7, c(4, 1, 2, 3, 5:10)],
   col.header = c(
-    &quot;Predictors&quot;, &quot;Group&quot;, &quot;Est (simple REWB)&quot;, &quot;SE (simple REWB)&quot;, &quot;p (simple REWB)&quot;,
+    &quot;Predictors&quot;, &quot;Est (complex REWB)&quot;, &quot;SE (complex REWB)&quot;, &quot;p (complex REWB)&quot;,
+    &quot;Est (simple REWB)&quot;, &quot;SE (simple REWB)&quot;, &quot;p (simple REWB)&quot;,
     &quot;Est (Mundlak)&quot;, &quot;SE (Mundlak)&quot;, &quot;p (Mundlak)&quot;
   )
 )</code></pre>
@@ -2013,7 +2020,13 @@ tab_df(
 Predictors
 </th>
 <th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
-Group
+Est (complex REWB)
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+SE (complex REWB)
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+p (complex REWB)
 </th>
 <th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
 Est (simple REWB)
@@ -2021,16 +2034,16 @@ Est (simple REWB)
 <th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
 SE (simple REWB)
 </th>
-<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col7">
 p (simple REWB)
 </th>
-<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col8">
 Est (Mundlak)
 </th>
-<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col7">
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col9">
 SE (Mundlak)
 </th>
-<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col8">
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; 0">
 p (Mundlak)
 </th>
 </tr>
@@ -2039,24 +2052,30 @@ p (Mundlak)
 x_tv
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-within
+-4.44
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
--3.71
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-0.41
+0.57
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 0
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
--3.71
+-3.73
 </td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 0.41
 </td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+0
+</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+-3.73
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">
+0.41
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; 0">
 0
 </td>
 </tr>
@@ -2065,24 +2084,30 @@ within
 (Intercept)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-between
+61.82
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-65.1
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-5.67
+5.82
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 0
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-65.1
+62.73
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+5.85
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
-5.67
+0
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+62.73
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">
+5.85
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; 0">
 0
 </td>
 </tr>
@@ -2091,10 +2116,7 @@ between
 imean(x_tv)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-between
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
--6.3
+-6.29
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 0.52
@@ -2103,12 +2125,21 @@ between
 0
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
--2.58
+-6.3
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.52
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
-0.66
+0
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+-2.56
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">
+0.66
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; 0">
 0
 </td>
 </tr>
@@ -2117,9 +2148,6 @@ between
 age
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-between
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 -0.22
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
@@ -2131,10 +2159,19 @@ between
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 -0.22
 </td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 0.19
 </td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+0.26
+</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+-0.22
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">
+0.19
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; 0">
 0.26
 </td>
 </tr>
@@ -2143,24 +2180,30 @@ between
 z1_ti
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-between
+5.11
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+4.34
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.24
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 4.43
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 4.34
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-0.31
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-4.43
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
-4.34
+0.31
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+4.43
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">
+4.34
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; 0">
 0.31
 </td>
 </tr>
@@ -2169,7 +2212,13 @@ between
 z2_ti
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-between
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.09
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 0
@@ -2177,121 +2226,49 @@ between
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
 0
 </td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
 0.1
 </td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-0
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
-0
-</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; 0">
 0.1
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-sd_(Intercept).ID
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-ID
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-14.31
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-14.32
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
-NA
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-sd_time.ID
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-ID
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-3.39
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-3.39
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
-NA
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-cor_(Intercept).time.ID
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-ID
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
--0.77
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
--0.77
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
-NA
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
-NA
 </td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; border-bottom: double; ">
-sd_Observation.Residual
+time
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
-Residual
+1.16
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
-11.93
+0.61
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
-NA
+0.06
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
-NA
+1.09
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
-11.92
+0.66
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col7">
-NA
+0.1
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col8">
-NA
+1.09
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col9">
+0.66
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; 0">
+0.1
 </td>
 </tr>
 </table>
@@ -2736,6 +2713,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 </tr>
 </table>
 <p>As we can see, coefficients, standard errors and p-values of all relevant parameters are identical for the simple REWB and Mundlak models from both packages (<code>panelr::wbm()</code> and <code>lme4::lmer()</code>). This confirms the correct “translation” of the formulae from Bell at al. 2018 into <code>lmer()</code>-syntax.</p>
+<p>The complex REWB models are also (almost) identical, the minor variation after the second fractional part is most likely due to the slightly different random effects specification.</p>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>

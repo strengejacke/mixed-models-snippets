@@ -319,7 +319,7 @@ tab_model(
 
 ## Comparison with the panelr-package
 
-The [panelr-package](https://panelr.jacob-long.com/) provides functions to fit models similar to those suggested by Bell et al. 2018, especially the "simple REWB model" (`m4`) and the Mundlak-model (`m5`).
+The [panelr-package](https://panelr.jacob-long.com/) provides functions to fit models similar to those suggested by Bell et al. 2018, especially the "simple REWB model" (`m4`) and the Mundlak-model (`m5`). For the complex REWB model (`m3`), I needed some slight modification when using `panelr::wmb()`, which is similar to the above model `m2`.
 
 Here we compare the results from `panelr::wsb()` with our previous models `m3` (complex REWB), `m4` (simple REWB) and `m5` (Mundlak).
 
@@ -333,22 +333,29 @@ library(dplyr)
 # prepare the data for processing with "panelr"
 pd <- panel_data(d, id = ID, wave = time)
 
+# the complex REWB-model
+mp3 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time  | (time + x_tv | ID), 
+           data = pd, 
+           control = lmerControl(check.nobs.vs.nRE = "ignore"))
+
 # the simple REWB-model
-mp4 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd)
+mp4 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd)
 
 # the Mundlak model
-mp5 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd, model = "contextual")
+mp5 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd, model = "contextual")
 
-tab <- tidy(mp4) %>% 
-  bind_cols(tidy(mp5)) %>% 
-  select(-statistic, -statistic1, -group1, -term1) %>% 
+tab <- tidy(mp3) %>% 
+  left_join(tidy(mp4), by = "term") %>% 
+  left_join(tidy(mp5), by = "term") %>% 
+  select(-statistic, -statistic.x, -statistic.y, -group, -group.x, -group.y) %>% 
   round_num(2)
 
 # print models side-by-side
 tab_df(
-  tab[, c(5, 1, 2, 3, 4, 6, 7, 8)],
+  tab[1:7, c(4, 1, 2, 3, 5:10)],
   col.header = c(
-    "Predictors", "Group", "Est (simple REWB)", "SE (simple REWB)", "p (simple REWB)",
+    "Predictors", "Est (complex REWB)", "SE (complex REWB)", "p (complex REWB)",
+    "Est (simple REWB)", "SE (simple REWB)", "p (simple REWB)",
     "Est (Mundlak)", "SE (Mundlak)", "p (Mundlak)"
   )
 )
@@ -365,7 +372,10 @@ tab_model(
 )
 ```
 
+
 As we can see, coefficients, standard errors and p-values of all relevant parameters are identical for the simple REWB and Mundlak models from both packages (`panelr::wbm()` and `lme4::lmer()`). This confirms the correct "translation" of the formulae from Bell at al. 2018 into `lmer()`-syntax.
+
+The complex REWB models are also (almost) identical, the minor variation after the second fractional part is most likely due to the slightly different random effects specification.
 
 ## Conclusion
 
