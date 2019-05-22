@@ -1978,8 +1978,8 @@ NA
 </div>
 <div id="comparison-with-the-panelr-package" class="section level2">
 <h2>Comparison with the panelr-package</h2>
-<p>The <a href="https://panelr.jacob-long.com/">panelr-package</a> provides functions to fit models similar to those suggested by Bell et al. 2018, especially the “simple REWB model” (<code>m4</code>) and the Mundlak-model (<code>m5</code>). For the complex REWB model (<code>m3</code>), I needed some slight modification when using <code>panelr::wmb()</code>, which is similar to the above model <code>m2</code>.</p>
-<p>Here we compare the results from <code>panelr::wsb()</code> with our previous models <code>m3</code> (complex REWB), <code>m4</code> (simple REWB) and <code>m5</code> (Mundlak).</p>
+<p>The <a href="https://panelr.jacob-long.com/">panelr-package</a> provides functions to fit models similar to those suggested by Bell et al. 2018, especially the “simple REWB model” (<code>m4</code>) and the Mundlak-model (<code>m5</code>). For the complex REWB model (<code>m3</code>), I needed some slight modification when using <code>panelr::wbm()</code>, so the following model <code>mp3</code> that mimics the complex REWB model is similar to the above model <code>m2</code>.</p>
+<p>Here we compare the results from <code>panelr::wbm()</code> with our previous models <code>m3</code> (complex REWB), <code>m4</code> (simple REWB) and <code>m5</code> (Mundlak).</p>
 <p><strong>Note:</strong> Since <em>panelr</em> is not yet supported by <em>sjPlot</em>, the result from <code>tidy()</code> is printed as HTML-table below.</p>
 <pre class="r"><code>library(panelr)
 library(broom)

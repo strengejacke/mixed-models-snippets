@@ -319,9 +319,9 @@ tab_model(
 
 ## Comparison with the panelr-package
 
-The [panelr-package](https://panelr.jacob-long.com/) provides functions to fit models similar to those suggested by Bell et al. 2018, especially the "simple REWB model" (`m4`) and the Mundlak-model (`m5`). For the complex REWB model (`m3`), I needed some slight modification when using `panelr::wmb()`, which is similar to the above model `m2`.
+The [panelr-package](https://panelr.jacob-long.com/) provides functions to fit models similar to those suggested by Bell et al. 2018, especially the "simple REWB model" (`m4`) and the Mundlak-model (`m5`). For the complex REWB model (`m3`), I needed some slight modification when using `panelr::wbm()`, so the following model `mp3` that mimics the complex REWB model is similar to the above model `m2`.
 
-Here we compare the results from `panelr::wsb()` with our previous models `m3` (complex REWB), `m4` (simple REWB) and `m5` (Mundlak).
+Here we compare the results from `panelr::wbm()` with our previous models `m3` (complex REWB), `m4` (simple REWB) and `m5` (Mundlak).
 
 **Note:** Since _panelr_ is not yet supported by _sjPlot_, the result from `tidy()` is printed as HTML-table below.
 
