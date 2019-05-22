@@ -386,9 +386,9 @@ $(document).ready(function () {
 (http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
 ---></p>
 <p>This document is licensed under the <a href="http://creativecommons.org/licenses/by-nc-sa/2.5/ca/">Creative Commons attribution-noncommercial license</a>. Please share &amp; remix noncommercially, mentioning its origin. Sourcecode and data are available <a href="https://github.com/strengejacke/mixed-models-snippets">here</a>.</p>
-<div id="the-violation-of-the-gauss-markov-assumption-in-re-models" class="section level2">
-<h2>The violation of the Gauss-Markov-assumption in RE-models</h2>
-<p>This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (so called Gauss-Markov-assumption). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as “fixed” over a long time period. Apart from this, there are more shortcomings of FE-models as well, see <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span>.</p>
+<div id="the-violation-of-the-gauss-markov-assumptions-in-re-models" class="section level2">
+<h2>The violation of the Gauss-Markov-assumptions in RE-models</h2>
+<p>This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (on of the Gauss-Markov-assumptions). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as “fixed” over a long time period. Apart from this, there are more shortcomings of FE-models as well, see <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span>.</p>
 <p>The following equations and discussion on FE vs. RE are based on <span class="citation">(Bell, Fairbrother, and Jones 2018)</span>. Further discussion on FE vs. RE, also at the end of this document, refer to <span class="citation">(Gelman and Hill 2007)</span> and <span class="citation">(Bafumi and Gelman 2006)</span>.</p>
 <div id="adding-group-meaned-predictors-to-solve-this-issue" class="section level3">
 <h3>Adding group meaned predictors to solve this issue</h3>
