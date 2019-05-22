@@ -1505,7 +1505,6 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <p>If the estimates of the within- and between-effect (<code>x_tv_dm</code> and <code>x_tv_gm</code>) are (almost) identical, or if the contextual effect (<code>x_tv_gm</code>) in the <strong>Mundlak</strong>-model is zero and doesn’t give a significant improvement for the model, you can also use a simple RE-model.</p>
 <p>A simple way to check this is a likelihood-ratio test between the simple RE-model and the Mundlak-model:</p>
 <pre class="r"><code>anova(m1, m5)
-#&gt; refitting model(s) with ML (instead of REML)
 #&gt; Data: d
 #&gt; Models:
 #&gt; m1: QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID)
@@ -1557,8 +1556,7 @@ m9 &lt;- lmer(
   QoL ~ time + x_tv_dm + x_tv_gm +
     (1 + time | ID) + (1 + x_tv_dm | ID),
   data = d
-)
-#&gt; boundary (singular) fit: see ?isSingular</code></pre>
+)</code></pre>
 <p>As we can see, the estimates of the FE-models and the RE-model are identical. However, the estimates from the REWB-model differ. This is because the time-varying predictors, the within-subject effect <code>x_tv_dm</code>, is allowed to vary between subjects as well (i.e. it is modelled as random slope).</p>
 <div id="table-3-comparison-of-fe--and-re-models" class="section level4">
 <h4>Table 3: Comparison of FE- and RE-models</h4>
@@ -1951,6 +1949,767 @@ NA
 </tr>
 </table>
 </div>
+</div>
+<div id="comparison-with-the-panelr-package" class="section level2">
+<h2>Comparison with the panelr-package</h2>
+<p>The <a href="https://panelr.jacob-long.com/">panelr-package</a> provides functions to fit models similar to those suggested by Bell et al. 2018, especially the “simple REWB model” (<code>m4</code>) and the Mundlak-model (<code>m5</code>).</p>
+<p>Here we compare the results from <code>panelr::wsb()</code> with our previous models <code>m3</code> (complex REWB), <code>m4</code> (simple REWB) and <code>m5</code> (Mundlak).</p>
+<p><strong>Note:</strong> Since <em>panelr</em> is not yet supported by <em>sjPlot</em>, the result from <code>tidy()</code> is printed as HTML-table below.</p>
+<pre class="r"><code>library(panelr)
+library(broom)
+library(dplyr)
+
+# prepare the data for processing with &quot;panelr&quot;
+pd &lt;- panel_data(d, id = ID, wave = time)
+
+# the simple REWB-model
+mp4 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd)
+
+# the Mundlak model
+mp5 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd, model = &quot;contextual&quot;)
+
+tab &lt;- tidy(mp4) %&gt;% 
+  bind_cols(tidy(mp5)) %&gt;% 
+  select(-statistic, -statistic1, -group1, -term1) %&gt;% 
+  round_num(2)
+
+# print models side-by-side
+tab_df(
+  tab[, c(5, 1, 2, 3, 4, 6, 7, 8)],
+  col.header = c(
+    &quot;Predictors&quot;, &quot;Group&quot;, &quot;Est (simple REWB)&quot;, &quot;SE (simple REWB)&quot;, &quot;p (simple REWB)&quot;,
+    &quot;Est (Mundlak)&quot;, &quot;SE (Mundlak)&quot;, &quot;p (Mundlak)&quot;
+  )
+)</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; text-align:left; ">
+Predictors
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+Group
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+Est (simple REWB)
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+SE (simple REWB)
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+p (simple REWB)
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">
+Est (Mundlak)
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col7">
+SE (Mundlak)
+</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col8">
+p (Mundlak)
+</th>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+x_tv
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+within
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-3.71
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.41
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-3.71
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+0.41
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+0
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+between
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+65.1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+5.67
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+65.1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+5.67
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+0
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+imean(x_tv)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+between
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-6.3
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.52
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-2.58
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+0.66
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+0
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+age
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+between
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-0.22
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.19
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.26
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-0.22
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+0.19
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+0.26
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+z1_ti
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+between
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+4.43
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+4.34
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.31
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+4.43
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+4.34
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+0.31
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+z2_ti
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+between
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0.1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+0
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+0.1
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+sd_(Intercept).ID
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+ID
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+14.31
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+14.32
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+NA
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+sd_time.ID
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+ID
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+3.39
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+3.39
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+NA
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+cor_(Intercept).time.ID
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+ID
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-0.77
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">
+-0.77
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">
+NA
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; border-bottom: double; ">
+sd_Observation.Residual
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
+Residual
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
+11.93
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">
+11.92
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col7">
+NA
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col8">
+NA
+</td>
+</tr>
+</table>
+<pre class="r"><code>
+# compare with other models
+tab_model(
+  m3, m4, m5,
+  show.ci = FALSE, 
+  show.se = TRUE, 
+  auto.label = FALSE, 
+  string.se = &quot;SE&quot;,
+  show.icc = FALSE,
+  dv.labels = c(&quot;Complex REWB&quot;, &quot;Simple REWB&quot;, &quot;Mundlak&quot;)
+)</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
+ 
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+Complex REWB
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+Simple REWB
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+Mundlak
+</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
+Predictors
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+SE
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+p
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+SE
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">
+p
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col8">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col9">
+SE
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  0">
+p
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+61.69
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+5.82
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>&lt;0.001
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+62.73
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+5.85
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+<strong>&lt;0.001
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+62.73
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+5.85
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+<strong>&lt;0.001
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+time
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.19
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.60
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.048</strong>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.09
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.66
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+0.098
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+1.09
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+0.66
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+0.098
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+age
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.22
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.19
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.250
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.22
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.19
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+0.261
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+-0.22
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+0.19
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+0.261
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+x_tv_dm
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-4.50
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.58
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>&lt;0.001
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-3.73
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.41
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+<strong>&lt;0.001
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+x_tv_gm
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-6.30
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.52
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>&lt;0.001
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-6.30
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.52
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+<strong>&lt;0.001
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+-2.56
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+0.66
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+<strong>&lt;0.001
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+z1_ti
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+5.12
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+4.34
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.238
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+4.43
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+4.34
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+0.308
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+4.43
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+4.34
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+0.308
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+z2_ti
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.00
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.00
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.084
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.00
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.00
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+0.095
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+0.00
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+0.00
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+0.095
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+x_tv
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">
+-3.73
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">
+0.41
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">
+<strong>&lt;0.001
+</td>
+</tr>
+<tr>
+<td colspan="10" style="font-weight:bold; text-align:left; padding-top:.8em;">
+Random Effects
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+σ<sup>2</sup>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+119.27
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+142.12
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+142.12
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+τ<sub>00</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+110.58 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+201.95 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+201.95 <sub>ID</sub>
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+28.22 <sub>ID.1</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+τ<sub>11</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.59 <sub>ID.time</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+10.82 <sub>ID.time</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+10.82 <sub>ID.time</sub>
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+14.45 <sub>ID.1.x_tv_dm</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+ρ<sub>01</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+-1.00 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+-0.77 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+-0.77 <sub>ID</sub>
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.50 <sub>ID.1</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+ 
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+N
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+188 <sub>ID</sub>
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+564
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+564
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+564
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.452 / 0.674
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.382 / 0.649
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.382 / 0.649
+</td>
+</tr>
+</table>
+<p>As we can see, coefficients, standard errors and p-values of all relevant parameters are identical for the simple REWB and Mundlak models from both packages (<code>panelr::wbm()</code> and <code>lme4::lmer()</code>). This confirms the correct “translation” of the formulae from Bell at al. 2018 into <code>lmer()</code>-syntax.</p>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>

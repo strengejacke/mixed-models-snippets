@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
   echo = TRUE,
   collapse = TRUE, 
   warning = FALSE,
+  message = FALSE,
   comment = "#>", 
   dev = "png"
 )
@@ -314,6 +315,56 @@ tab_model(
   dv.labels = c("FE-model with ID", "FE, de-meaned Y (with Intercept)", "RE", "Complex REWB")
 )
 ```
+
+## Comparison with the panelr-package
+
+The [panelr-package](https://panelr.jacob-long.com/) provides functions to fit models similar to those suggested by Bell et al. 2018, especially the "simple REWB model" (`m4`) and the Mundlak-model (`m5`).
+
+Here we compare the results from `panelr::wsb()` with our previous models `m3` (complex REWB), `m4` (simple REWB) and `m5` (Mundlak).
+
+**Note:** Since _panelr_ is not yet supported by _sjPlot_, the result from `tidy()` is printed as HTML-table below.
+
+```{r}
+library(panelr)
+library(broom)
+library(dplyr)
+
+# prepare the data for processing with "panelr"
+pd <- panel_data(d, id = ID, wave = time)
+
+# the simple REWB-model
+mp4 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd)
+
+# the Mundlak model
+mp5 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti | (time | ID), data = pd, model = "contextual")
+
+tab <- tidy(mp4) %>% 
+  bind_cols(tidy(mp5)) %>% 
+  select(-statistic, -statistic1, -group1, -term1) %>% 
+  round_num(2)
+
+# print models side-by-side
+tab_df(
+  tab[, c(5, 1, 2, 3, 4, 6, 7, 8)],
+  col.header = c(
+    "Predictors", "Group", "Est (simple REWB)", "SE (simple REWB)", "p (simple REWB)",
+    "Est (Mundlak)", "SE (Mundlak)", "p (Mundlak)"
+  )
+)
+
+# compare with other models
+tab_model(
+  m3, m4, m5,
+  show.ci = FALSE, 
+  show.se = TRUE, 
+  auto.label = FALSE, 
+  string.se = "SE",
+  show.icc = FALSE,
+  dv.labels = c("Complex REWB", "Simple REWB", "Mundlak")
+)
+```
+
+As we can see, coefficients, standard errors and p-values of all relevant parameters are identical for the simple REWB and Mundlak models from both packages (`panelr::wbm()` and `lme4::lmer()`). This confirms the correct "translation" of the formulae from Bell at al. 2018 into `lmer()`-syntax.
 
 ## Conclusion
 
