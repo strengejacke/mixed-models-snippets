@@ -422,4 +422,8 @@ m <- lmer(
 
 > "I don’t know that there’s anything much that’s time-invariant in what I study. But, in any case, the so-called fixed-effects analysis is mathematically a special case of multilevel modeling in which the group-level variance is set to infinity. I agree that there’s no need to “believe” that model for the method to work; however, I think it works because of some implicit additivity assumptions. I’d prefer to (a) allow the group-level variance to be finite, and (b) work in the relevant assumptions more directly."
 
+## Further Readings
+
+- Discussion at [Cross-Validted](https://stats.stackexchange.com/q/100227)
+
 # References

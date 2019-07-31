@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Daniel Lüdecke" />
@@ -344,18 +345,6 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -404,6 +393,7 @@ $(document).ready(function () {
 <li><a href="#comparison-with-the-panelr-package">Comparison with the panelr-package</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
 <li><a href="#further-critics-of-the-fe-approach">Further critics of the FE-approach</a></li>
+<li><a href="#further-readings">Further Readings</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -1929,7 +1919,7 @@ Random Effects
 N
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
- 
+188 <sub>ID</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
  
@@ -1959,10 +1949,10 @@ Observations
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-R<sup>2</sup> / adjusted R<sup>2</sup>
+R<sup>2</sup> / R<sup>2</sup> adjusted
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-0.743 / 0.613
+NA
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 0.180 / 0.177
@@ -2758,6 +2748,12 @@ m &lt;- lmer(
 <p>“I don’t know that there’s anything much that’s time-invariant in what I study. But, in any case, the so-called fixed-effects analysis is mathematically a special case of multilevel modeling in which the group-level variance is set to infinity. I agree that there’s no need to “believe” that model for the method to work; however, I think it works because of some implicit additivity assumptions. I’d prefer to (a) allow the group-level variance to be finite, and (b) work in the relevant assumptions more directly.&quot;</p>
 </blockquote>
 </div>
+<div id="further-readings" class="section level2">
+<h2>Further Readings</h2>
+<ul>
+<li>Discussion at <a href="https://stats.stackexchange.com/q/100227">Cross-Validted</a></li>
+</ul>
+</div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
@@ -2796,6 +2792,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
