@@ -394,7 +394,7 @@ $(document).ready(function () {
 </div>
 <div id="fully-crossed-or-cross-classified-models" class="section level2">
 <h2>Fully-crossed or cross-classified models</h2>
-<p>If each <strong>Subject</strong> receives the same <strong>Cluster</strong>, it is a <em>fully crossed</em> random factors design. If there is some mixture it is <em>cross-classified</em>. The appropriate model notation for a crossed design would be:</p>
+<p>If each <strong>Subject</strong> receives the same <strong>Cluster</strong> (i.e. subjects appear in all clusters), it is a <em>fully crossed</em> random factors design. If there is some mixture it is <em>cross-classified</em>. The appropriate model notation for a crossed design would be:</p>
 <pre class="r"><code>lmer(DV ~ IV + (1 + IV | Cluster) + (1 + IV | Subject), data = ...)</code></pre>
 </div>
 </div>

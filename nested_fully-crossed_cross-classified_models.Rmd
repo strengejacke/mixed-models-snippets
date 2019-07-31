@@ -39,7 +39,7 @@ lmer(DV ~ IV + (1 + IV | Cluster ) + (1 + IV | Cluster:Subject), data = ...)
 
 ## Fully-crossed or cross-classified models
 
-If each **Subject** receives the same **Cluster**, it is a _fully crossed_ random factors design. If there is some mixture it is _cross-classified_. The appropriate model notation for a crossed design would be:
+If each **Subject** receives the same **Cluster** (i.e. subjects appear in all clusters), it is a _fully crossed_ random factors design. If there is some mixture it is _cross-classified_. The appropriate model notation for a crossed design would be:
 
 ```{r eval=FALSE}
 lmer(DV ~ IV + (1 + IV | Cluster) + (1 + IV | Subject), data = ...)
