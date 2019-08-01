@@ -325,12 +325,8 @@ The [panelr-package](https://panelr.jacob-long.com/) provides functions to fit m
 
 Here we compare the results from `panelr::wbm()` with our previous models `m3` (complex REWB), `m4` (simple REWB) and `m5` (Mundlak).
 
-**Note:** Since _panelr_ is not yet supported by _sjPlot_, the result from `tidy()` is printed as HTML-table below.
-
 ```{r}
 library(panelr)
-library(broom)
-library(dplyr)
 
 # prepare the data for processing with "panelr"
 pd <- panel_data(d, id = ID, wave = time)
@@ -346,22 +342,18 @@ mp4 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd)
 # the Mundlak model
 mp5 <- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd, model = "contextual")
 
-tab <- tidy(mp3) %>% 
-  left_join(tidy(mp4), by = "term") %>% 
-  left_join(tidy(mp5), by = "term") %>% 
-  select(-statistic, -statistic.x, -statistic.y, -group, -group.x, -group.y) %>% 
-  round_num(2)
-
-# print models side-by-side
-tab_df(
-  tab[1:7, c(4, 1, 2, 3, 5:10)],
-  col.header = c(
-    "Predictors", "Est (complex REWB)", "SE (complex REWB)", "p (complex REWB)",
-    "Est (simple REWB)", "SE (simple REWB)", "p (simple REWB)",
-    "Est (Mundlak)", "SE (Mundlak)", "p (Mundlak)"
-  )
+tab_model(
+  mp3, mp4, mp5,
+  show.ci = FALSE, 
+  show.se = TRUE, 
+  auto.label = FALSE, 
+  string.se = "SE",
+  show.icc = FALSE,
+  dv.labels = c("Complex REWB", "Simple REWB", "Mundlak")
 )
+```
 
+```{r}
 # compare with other models
 tab_model(
   m3, m4, m5,
