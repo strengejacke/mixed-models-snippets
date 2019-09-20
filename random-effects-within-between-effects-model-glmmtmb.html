@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Daniel Lüdecke" />
@@ -270,7 +271,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -344,18 +344,6 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -386,9 +374,9 @@ $(document).ready(function () {
 (http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
 ---></p>
 <p>This document is licensed under the <a href="http://creativecommons.org/licenses/by-nc-sa/2.5/ca/">Creative Commons attribution-noncommercial license</a>. Please share &amp; remix noncommercially, mentioning its origin. Sourcecode and data are available <a href="https://github.com/strengejacke/mixed-models-snippets">here</a>.</p>
-<div id="the-violation-of-the-gauss-markov-assumptions-in-re-models" class="section level2">
-<h2>The violation of the Gauss-Markov-assumptions in RE-models</h2>
-<p>This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (on of the Gauss-Markov-assumptions). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as “fixed” over a long time period. Apart from this, there are more shortcomings of FE-models as well, see <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span>.</p>
+<div id="the-violation-of-model-assumptions-in-re-models-for-panel-data" class="section level2">
+<h2>The violation of model-assumptions in RE-models for panel data</h2>
+<p>This example shows how to address the issue when group factors (random effects) and time-varying predictors correlate, especially in panel data, for mixed models. In such cases, one of the Gauss-Markov-assumptions is violated. In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as “fixed” over a long time period. Apart from this, there are more shortcomings of FE-models as well, see <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> and <span class="citation">(Bell, Jones, and Fairbrother 2018)</span>.</p>
 <p>The following equations and discussion on FE vs. RE are based on <span class="citation">(Bell, Fairbrother, and Jones 2018)</span>. Further discussion on FE vs. RE, also at the end of this document, refer to <span class="citation">(Gelman and Hill 2007)</span> and <span class="citation">(Bafumi and Gelman 2006)</span>.</p>
 <div id="adding-group-meaned-predictors-to-solve-this-issue" class="section level3">
 <h3>Adding group meaned predictors to solve this issue</h3>
@@ -931,7 +919,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 0.395 / 0.713
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-NA
+0.573 / NA
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 0.415 / 0.693
@@ -1892,7 +1880,7 @@ Random Effects
 N
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
- 
+188 <sub>ID</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
  
@@ -1922,10 +1910,10 @@ Observations
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-R<sup>2</sup> / adjusted R<sup>2</sup>
+R<sup>2</sup> / R<sup>2</sup> adjusted
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-0.743 / 0.613
+NA
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
 0.180 / 0.177
@@ -2020,6 +2008,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

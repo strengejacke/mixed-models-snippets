@@ -27,9 +27,9 @@ This document is licensed under the
 [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc-sa/2.5/ca/).
 Please share \& remix noncommercially, mentioning its origin. Sourcecode and data are available [here](https://github.com/strengejacke/mixed-models-snippets).
 
-## The violation of the Gauss-Markov-assumptions in RE-models
+## The violation of model-assumptions in RE-models for panel data
 
-This example shows how to address the issue of correlating predictors (fixed effects) and group (random) effects, especially in panel data, for mixed models (on of the Gauss-Markov-assumptions). In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as "fixed" over a long time period. Apart from this, there are more shortcomings of FE-models as well, see [@bell_fixed_2018] and [@bell_understanding_2018].
+This example shows how to address the issue when group factors (random effects) and time-varying predictors correlate, especially in panel data, for mixed models. In such cases, one of the Gauss-Markov-assumptions is violated. In particular in econometrics, fixed-effects models are considered the gold-standard for these cases, however, it often makes no sense to consider group-effects as "fixed" over a long time period. Apart from this, there are more shortcomings of FE-models as well, see [@bell_fixed_2018] and [@bell_understanding_2018].
 
 The following equations and discussion on FE vs. RE are based on [@bell_fixed_2018]. Further  discussion on FE vs. RE, also at the end of this document, refer to [@gelman_data_2007] and [@bafumi_fitting_2006].
 
