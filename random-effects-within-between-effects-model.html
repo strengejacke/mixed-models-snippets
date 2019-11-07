@@ -426,7 +426,7 @@ summary {
 <p>The following code snippets show how to translate the Equations from <span class="citation">(Bell, Fairbrother, and Jones 2018)</span> into R-code, using <code>lmer()</code> from the <strong>lme4</strong>-package.</p>
 <pre class="r"><code>library(lme4)
 library(sjPlot)
-library(sjmisc)
+library(parameters)
 library(lfe)
 
 load(&quot;example.RData&quot;)</code></pre>
@@ -448,7 +448,7 @@ load(&quot;example.RData&quot;)</code></pre>
 </div>
 <div id="classical-growth-model-for-longitudinal-data" class="section level2">
 <h2>“Classical” growth-model for longitudinal data</h2>
-<pre class="r"><code>m1 &lt;- lmer(
+<pre class="r"><code>model_re &lt;- lmer(
   QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID),
   data = d
 )</code></pre>
@@ -458,34 +458,37 @@ load(&quot;example.RData&quot;)</code></pre>
 <p>Next is a model from Eq. 10, which includes the <em>“de-meaned”</em> time-varying variable as well as the <em>“group-meaned”</em> time-varying variable.</p>
 <pre class="r"><code># compute mean of &quot;x_tv&quot; for each subject (ID) and
 # then &quot;de-mean&quot; x_tv
-d &lt;- de_mean(d, x_tv, QoL, grp = ID) # from package &quot;sjmisc&quot;</code></pre>
+d &lt;- cbind(
+  d,
+  demean(d, select = c(&quot;x_tv&quot;, &quot;QoL&quot;), group = &quot;ID&quot;) # from package &quot;parameters&quot;
+)</code></pre>
 <p>Now we have:</p>
 <ul>
-<li><code>x_tv_gm</code> : time-varying variable with the mean of <code>x_tv</code> accross all time-points, for each patient (ID).</li>
-<li><code>x_tv_dm</code> : the de-meaned time-varying variable <code>x_tv</code></li>
+<li><code>x_tv_between</code> : time-varying variable with the mean of <code>x_tv</code> accross all time-points, for each patient (ID).</li>
+<li><code>x_tv_within</code> : the de-meaned time-varying variable <code>x_tv</code></li>
 </ul>
-<p><code>QoL_gm</code> and <code>QoL_dm</code> are used to test different FE-models, which are described later. In those models, I also use a “de-meaned” response variable without the group-variable (<code>ID</code>) as fixed effect (see Equation 6 in the paper).</p>
+<p><code>QoL_between</code> and <code>QoL_within</code> are used to test different FE-models, which are described later. In those models, I also use a “de-meaned” response variable without the group-variable (<code>ID</code>) as fixed effect (see Equation 6 in the paper).</p>
 </div>
 <div id="the-complex-random-effect-within-between-model-rewb" class="section level2">
 <h2>The complex random-effect-within-between model (REWB)</h2>
-<p>Eq. 10 suggests allowing the “within-effect” (de-meaned) vary across individuals, that’s why <code>x_tv_dm</code> is added as random slope as well.</p>
-<p>Here, the estimate of <code>x_tv_dm</code> indicates the <em>within-subject</em> effect, while the estimate of <code>x_tv_gm</code> indicates the <em>between-subject</em> effect. This model also allows for heterogenity across level-2 units, that’s why <code>x_tv_dm</code> also appears in the random effects. The estimates of <code>z1_ti</code> and <code>z2_ti</code> also indicate a <em>between-subject</em> effect, as this is a level-2 variable, which cannot have a within-subject effect.</p>
+<p>Eq. 10 suggests allowing the “within-effect” (de-meaned) vary across individuals, that’s why <code>x_tv_within</code> is added as random slope as well.</p>
+<p>Here, the estimate of <code>x_tv_within</code> indicates the <em>within-subject</em> effect, while the estimate of <code>x_tv_between</code> indicates the <em>between-subject</em> effect. This model also allows for heterogenity across level-2 units, that’s why <code>x_tv_within</code> also appears in the random effects. The estimates of <code>z1_ti</code> and <code>z2_ti</code> also indicate a <em>between-subject</em> effect, as this is a level-2 variable, which cannot have a within-subject effect.</p>
 <div id="model-from-equation-10" class="section level3">
 <h3>Model from Equation 10</h3>
 <p>Here is the equation 10 from Bell et al. 2018:</p>
 <p>y<sub>it</sub> = β<sub>0</sub> + β<sub>1W</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + β<sub>2B</sub> ͞x<sub>i</sub> + β<sub>3</sub> z<sub>i</sub> + υ<sub>i0</sub> + υ<sub>i0</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + ε<sub>it</sub></p>
 <ul>
 <li>
-x<sub>it</sub> - ͞x<sub>i</sub> is the de-meaned predictor, <em>x_tv_dm</em>
+x<sub>it</sub> - ͞x<sub>i</sub> is the de-meaned predictor, <em>x_tv_within</em>
 </li>
 <li>
-͞x<sub>i</sub> is the group-meaned predictor, <em>x_tv_gm</em>
+͞x<sub>i</sub> is the group-meaned predictor, <em>x_tv_between</em>
 </li>
 <li>
-β<sub>1W</sub> is the coefficient for x_tv_dm (within-subject)
+β<sub>1W</sub> is the coefficient for x_tv_within (within-subject)
 </li>
 <li>
-β<sub>2B</sub> is the coefficient for x_tv_gm (bewteen-subject)
+β<sub>2B</sub> is the coefficient for x_tv_between (bewteen-subject)
 </li>
 <li>
 β<sub>3</sub> is the coefficient for <code>z1_ti</code> or <code>z2_ti</code> (bewteen-subject)
@@ -493,37 +496,37 @@ x<sub>it</sub> - ͞x<sub>i</sub> is the de-meaned predictor, <em>x_tv_dm</em>
 </ul>
 <pre class="r"><code># This model this leads to an error (number of observations &lt;= number of 
 # random effects), the check for nobs vs. re is ignored here.
-m2 &lt;- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm | ID),
+model_rewb &lt;- lmer(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time + x_tv_within | ID),
   data = d,
   control = lmerControl(check.nobs.vs.nRE = &quot;ignore&quot;)
 )
 
 # An alternative could be to model the random effects as not correlated.
 # m2b &lt;- lmer(
-#   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
+#   QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time + x_tv_within || ID),
 #   data = d
 # )
 
 # here we get no error message, model runs fine...
-m3 &lt;- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
-    (1 + time | ID) + (1 + x_tv_dm | ID),
+model_complex_rewb &lt;- lmer(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + 
+    (1 + time | ID) + (1 + x_tv_within | ID),
   data = d
 )
 
 # an alternative would be to assume independence between random slopes
 # and no covariance...
-m3a &lt;- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
-    (1 + time | ID) + (0 + x_tv_dm | ID),
+model_complex_rewb_2 &lt;- lmer(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + 
+    (1 + time | ID) + (0 + x_tv_within | ID),
   data = d
 )</code></pre>
-<p>We compare all model fits, but we go on with <code>m3</code> (the second model in the table below) for now…</p>
+<p>We compare all model fits, but we go on with <code>model_complex_rewb</code> (the second model in the table below) for now…</p>
 <div id="table-1-comparison-of-complex-rewb-models" class="section level4">
 <h4>Table 1: Comparison of complex REWB-Models</h4>
 <pre class="r"><code>tab_model(
-  m2, m3, m3a,
+  model_rewb, model_complex_rewb, model_complex_rewb_2,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -676,7 +679,7 @@ age
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_dm
+x_tv_within
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -4.44
@@ -708,7 +711,7 @@ x_tv_dm
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_gm
+x_tv_between
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -6.29
@@ -862,10 +865,10 @@ Random Effects
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-13.95 <sub>ID.x_tv_dm</sub>
+13.95 <sub>ID.x_tv_within</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-14.45 <sub>ID.1.x_tv_dm</sub>
+14.45 <sub>ID.1.x_tv_within</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
  
@@ -943,24 +946,24 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <div id="the-simple-random-effect-within-between-model-rewb-and-mundlak-model" class="section level2">
 <h2>The simple random-effect-within-between model (REWB) and Mundlak model</h2>
 <p>After email correspondance, the paper’s authors suggest that, depending on the research interest and necessary complexity of the model, a “simple” random-slope might be suitable as well. As stated in the paper, this is useful if homogenity across level-2 units is assumed. This model usually yields the same results as a FE-model, however, we additionally have information about the random effects - and the model can incorporate time-invariant covariates.</p>
-<p>Again, the estimate of <code>x_tv_dm</code> indicates the within-subject effect, while the estimate of <code>x_tv_gm</code> indicates the between-subject effect.</p>
+<p>Again, the estimate of <code>x_tv_within</code> indicates the within-subject effect, while the estimate of <code>x_tv_between</code> indicates the between-subject effect.</p>
 <div id="model-from-equation-2" class="section level3">
 <h3>Model from Equation 2</h3>
 <p>y<sub>it</sub> = β<sub>0</sub> + β<sub>1W</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + β<sub>2B</sub> ͞x<sub>i</sub> + β<sub>3</sub> z<sub>i</sub> + (υ<sub>i</sub> + ε<sub>it</sub>)</p>
-<pre class="r"><code>m4 &lt;- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
+<pre class="r"><code>model_simple_rewb &lt;- lmer(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time | ID),
   data = d
 )</code></pre>
-<p>An alternativ would be the <strong>Mundlak</strong> model. Here, the estimate of <code>x_tv</code> indicates the <em>within-subject</em> effect, while the estimate of <code>x_tv_gm</code> indicates the <em>contextual</em> effect.</p>
+<p>An alternativ would be the <strong>Mundlak</strong> model. Here, the estimate of <code>x_tv</code> indicates the <em>within-subject</em> effect, while the estimate of <code>x_tv_between</code> indicates the <em>contextual</em> effect.</p>
 </div>
 <div id="model-from-equation-3" class="section level3">
 <h3>Model from Equation 3</h3>
 <p>y<sub>it</sub> = β<sub>0</sub> + β<sub>1W</sub> x<sub>it</sub> + β<sub>2C</sub> ͞x<sub>i</sub> + β<sub>3</sub> z<sub>i</sub> + (υ<sub>i</sub> + ε<sub>it</sub>)</p>
-<pre class="r"><code>m5 &lt;- lmer(
-  QoL ~ time + age + x_tv + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
+<pre class="r"><code>model_mundlak &lt;- lmer(
+  QoL ~ time + age + x_tv + x_tv_between + z1_ti + z2_ti + (1 + time | ID),
   data = d
 )</code></pre>
-<p>The contextual effect, i.e. the coefficient for <code>x_tv_gm</code>, indicates the effect of an individual (at level 1) that moves from one level-2 group into another one. In the above model, or in general: in case of longitudinal data, the contextual effect is meaningless, as level-2 predictors are individuals (or subjects) themselves, and by definition cannot “move” to another individual. Therefor, the REWB-model is more informative.</p>
+<p>The contextual effect, i.e. the coefficient for <code>x_tv_between</code>, indicates the effect of an individual (at level 1) that moves from one level-2 group into another one. In the above model, or in general: in case of longitudinal data, the contextual effect is meaningless, as level-2 predictors are individuals (or subjects) themselves, and by definition cannot “move” to another individual. Therefor, the REWB-model is more informative.</p>
 </div>
 </div>
 <div id="comparison-of-models" class="section level2">
@@ -969,7 +972,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <div id="table-2-comparison-of-re-rewb-and-mundlak-models" class="section level4">
 <h4>Table 2: Comparison of RE, REWB and Mundlak Models</h4>
 <pre class="r"><code>tab_model(
-  m1, m3, m4, m5,
+  model_re, model_complex_rewb, model_simple_rewb, model_mundlak,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -1278,7 +1281,7 @@ z2_ti
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_dm
+x_tv_within
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 </td>
@@ -1313,7 +1316,7 @@ x_tv_dm
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_gm
+x_tv_between
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 </td>
@@ -1424,7 +1427,7 @@ Random Effects
  
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-14.45 <sub>ID.1.x_tv_dm</sub>
+14.45 <sub>ID.1.x_tv_within</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
  
@@ -1518,17 +1521,20 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 </div>
 <div id="check-if-a-rewb--or-simple-re-model-suitable" class="section level2">
 <h2>Check if a REWB- or simple RE-model suitable</h2>
-<p>If the estimates of the within- and between-effect (<code>x_tv_dm</code> and <code>x_tv_gm</code>) are (almost) identical, or if the contextual effect (<code>x_tv_gm</code>) in the <strong>Mundlak</strong>-model is zero and doesn’t give a significant improvement for the model, you can also use a simple RE-model.</p>
+<p>If the estimates of the within- and between-effect (<code>x_tv_within</code> and <code>x_tv_between</code>) are (almost) identical, or if the contextual effect (<code>x_tv_between</code>) in the <strong>Mundlak</strong>-model is zero and doesn’t give a significant improvement for the model, you can also use a simple RE-model.</p>
 <p>A simple way to check this is a likelihood-ratio test between the simple RE-model and the Mundlak-model:</p>
-<pre class="r"><code>anova(m1, m5)
+<pre class="r"><code>anova(model_re, model_mundlak)
 #&gt; Data: d
 #&gt; Models:
-#&gt; m1: QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID)
-#&gt; m5: QoL ~ time + age + x_tv + x_tv_gm + z1_ti + z2_ti + (1 + time | 
-#&gt; m5:     ID)
-#&gt;    Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)    
-#&gt; m1 10 4662.6 4705.9 -2321.3   4642.6                             
-#&gt; m5 11 4649.5 4697.2 -2313.8   4627.5 15.081      1   0.000103 ***
+#&gt; model_re: QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID)
+#&gt; model_mundlak: QoL ~ time + age + x_tv + x_tv_between + z1_ti + z2_ti + (1 + 
+#&gt; model_mundlak:     time | ID)
+#&gt;               Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)
+#&gt; model_re      10 4662.6 4705.9 -2321.3   4642.6                         
+#&gt; model_mundlak 11 4649.5 4697.2 -2313.8   4627.5 15.081      1   0.000103
+#&gt;                  
+#&gt; model_re         
+#&gt; model_mundlak ***
 #&gt; ---
 #&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Here we see a significant improvement of the Mundlak-model over the simple RE-model, indicating that it makes sense to model within- and between-subjects effects, i.e. to apply a REWB-model.</p>
@@ -1538,46 +1544,46 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <p>The funtion <code>felm()</code> from the package <strong>lfe</strong> was use to computed the fixed effects regression models. Base R’s <code>lm()</code> gives the same result, however, the output is much longer due to the ID-parameters.</p>
 <p>y<sub>it</sub> = β<sub>1</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + (υ<sub>i</sub> + ε<sub>it</sub>)</p>
 <pre class="r"><code># Model from Equation 5
-m6 &lt;- felm(
-  QoL ~ time + x_tv_dm | ID,
+model_fe_ID &lt;- felm(
+  QoL ~ time + x_tv_within | ID,
   data = d
 )
 
 # same as this lm-model
 # m6a &lt;- lm(
-#   QoL ~ 0 + time + x_tv_dm + ID,
+#   QoL ~ 0 + time + x_tv_within + ID,
 #   data = d
 # )</code></pre>
 <p>Equation 6 describes a fixed effects model with de-meaned dependent variable.</p>
 <p>(y<sub>it</sub> - ͞y<sub>i</sub>) = β<sub>1</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + ε<sub>it</sub></p>
 <pre class="r"><code># Model from Equation 6
-m7 &lt;- felm(
-  QoL_dm ~ time + x_tv_dm,
+model_fe_y_within &lt;- felm(
+  QoL_within ~ time + x_tv_within,
   data = d
 )
 
 # or ...
-# m7 &lt;- lm(
-#   QoL_dm ~ 0 + time + x_tv_dm,
+# model_fe_y_within &lt;- lm(
+#   QoL_within ~ 0 + time + x_tv_within,
 #   data = d
 # )</code></pre>
 <p>We compare the results from the FE-models with a simple RE-model and the REWB-model.</p>
-<pre class="r"><code>m8 &lt;- lmer(
-  QoL ~ time + x_tv_dm + x_tv_gm + (1 | ID),
+<pre class="r"><code>model_re_2 &lt;- lmer(
+  QoL ~ time + x_tv_within + x_tv_between + (1 | ID),
   data = d
 )
 
 # Compare with complex REWB-model
-m9 &lt;- lmer(
-  QoL ~ time + x_tv_dm + x_tv_gm +
-    (1 + time | ID) + (1 + x_tv_dm | ID),
+model_complex_rewb3 &lt;- lmer(
+  QoL ~ time + x_tv_within + x_tv_between +
+    (1 + time | ID) + (1 + x_tv_within | ID),
   data = d
 )</code></pre>
-<p>As we can see, the estimates of the FE-models and the RE-model are identical. However, the estimates from the REWB-model differ. This is because the time-varying predictors, the within-subject effect <code>x_tv_dm</code>, is allowed to vary between subjects as well (i.e. it is modelled as random slope).</p>
+<p>As we can see, the estimates of the FE-models and the RE-model are identical. However, the estimates from the REWB-model differ. This is because the time-varying predictors, the within-subject effect <code>x_tv_within</code>, is allowed to vary between subjects as well (i.e. it is modelled as random slope).</p>
 <div id="table-3-comparison-of-fe--and-re-models" class="section level4">
 <h4>Table 3: Comparison of FE- and RE-models</h4>
 <pre class="r"><code>tab_model(
-  m6, m7, m8, m9,
+  model_fe_ID, model_fe_y_within, model_re_2, model_complex_rewb3,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -1687,7 +1693,7 @@ time
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_dm
+x_tv_within
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -3.66
@@ -1766,7 +1772,7 @@ x_tv_dm
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_gm
+x_tv_between
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 </td>
@@ -1880,7 +1886,7 @@ Random Effects
  
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-14.34 <sub>ID.1.x_tv_dm</sub>
+14.34 <sub>ID.1.x_tv_within</sub>
 </td>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
@@ -1968,26 +1974,26 @@ NA
 </div>
 <div id="comparison-with-the-panelr-package" class="section level2">
 <h2>Comparison with the panelr-package</h2>
-<p>The <a href="https://panelr.jacob-long.com/">panelr-package</a> provides functions to fit models similar to those suggested by Bell et al. 2018, especially the “simple REWB model” (<code>m4</code>) and the Mundlak-model (<code>m5</code>). For the complex REWB model (<code>m3</code>), I needed some slight modification when using <code>panelr::wbm()</code>, so the following model <code>mp3</code> that mimics the complex REWB model is similar to the above model <code>m2</code>.</p>
-<p>Here we compare the results from <code>panelr::wbm()</code> with our previous models <code>m3</code> (complex REWB), <code>m4</code> (simple REWB) and <code>m5</code> (Mundlak).</p>
+<p>The <a href="https://panelr.jacob-long.com/">panelr-package</a> provides functions to fit models similar to those suggested by Bell et al. 2018, especially the “simple REWB model” (<code>model_simple_rewb</code>) and the Mundlak-model (<code>model_mundlak</code>). For the complex REWB model (<code>model_complex_rewb</code>), I needed some slight modification when using <code>panelr::wbm()</code>, so the following model <code>model_complex_rewb_panelr</code> that mimics the complex REWB model is similar to the above model <code>model_rewb</code>.</p>
+<p>Here we compare the results from <code>panelr::wbm()</code> with our previous models <code>model_complex_rewb</code> (complex REWB), <code>model_simple_rewb</code> (simple REWB) and <code>model_mundlak</code> (Mundlak).</p>
 <pre class="r"><code>library(panelr)
 
 # prepare the data for processing with &quot;panelr&quot;
 pd &lt;- panel_data(d, id = ID, wave = time)
 
 # the complex REWB-model
-mp3 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time  | (time + x_tv | ID), 
+model_complex_rewb_panelr &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time  | (time + x_tv | ID), 
            data = pd, 
            control = lmerControl(check.nobs.vs.nRE = &quot;ignore&quot;))
 
 # the simple REWB-model
-mp4 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd)
+model_rewb_panelr &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd)
 
 # the Mundlak model
-mp5 &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd, model = &quot;contextual&quot;)
+model_mundlak_panelr &lt;- wbm(QoL ~ x_tv | age + z1_ti + z2_ti + time | (time | ID), data = pd, model = &quot;contextual&quot;)
 
 tab_model(
-  mp3, mp4, mp5,
+  model_complex_rewb_panelr, model_rewb_panelr, model_mundlak_panelr,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -2391,7 +2397,7 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 </table>
 <pre class="r"><code># compare with other models
 tab_model(
-  m3, m4, m5,
+  model_complex_rewb, model_simple_rewb, model_mundlak,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -2544,7 +2550,7 @@ age
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_dm
+x_tv_within
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -4.50
@@ -2573,7 +2579,7 @@ x_tv_dm
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-x_tv_gm
+x_tv_between
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -6.30
@@ -2753,7 +2759,7 @@ Random Effects
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-14.45 <sub>ID.1.x_tv_dm</sub>
+14.45 <sub>ID.1.x_tv_within</sub>
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
  
@@ -2838,25 +2844,28 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 <p>In case of convergence problems or singular fits, note that changing the optimizer might help. In this context, some models ran fine in <em>lme4</em>, while other models that had problems being fitted in <em>lme4</em> ran without any problems in <a href="random-effects-within-between-effects-model-glmmtmb.html"><strong>glmmTMB</strong></a></p>
 <pre class="r"><code># compute group-mean of &quot;x_tv&quot; for each subject (ID) and
 # then &quot;de-mean&quot; x_tv
-d &lt;- de_mean(d, x_tv, QoL, grp = ID)
+d &lt;- cbind(
+  d,
+  demean(d, select = c(&quot;x_tv&quot;, &quot;QoL&quot;), group = &quot;ID&quot;) # from package &quot;parameters&quot;
+)
 
 # fit complex REWB-model
 m &lt;- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
-    (1 + time | ID) + (1 + x_tv_dm | ID),
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + 
+    (1 + time | ID) + (1 + x_tv_within | ID),
   data = d
 )
 
 # an alternative would be to assume independence between random slopes
 # and no covariance...
 m &lt;- lmer(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
-    (1 + time | ID) + (0 + x_tv_dm | ID),
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + 
+    (1 + time | ID) + (0 + x_tv_within | ID),
   data = d
 )</code></pre>
 <ul>
-<li><code>x_tv_dm</code> indicates the <em>within-subject</em> effect</li>
-<li><code>x_tv_gm</code> indicates the <em>between-subject</em> effect</li>
+<li><code>x_tv_within</code> indicates the <em>within-subject</em> effect</li>
+<li><code>x_tv_between</code> indicates the <em>between-subject</em> effect</li>
 <li><code>z1_ti</code> and <code>z2_ti</code> also indicate a <em>between-subject</em> effect</li>
 </ul>
 </div>
