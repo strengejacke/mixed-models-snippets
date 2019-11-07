@@ -263,7 +263,7 @@ model_fe_ID <- felm(
 )
 
 # same as this lm-model
-# m6a <- lm(
+# model_fe_ID <- lm(
 #   QoL ~ 0 + time + x_tv_within + ID,
 #   data = d
 # )

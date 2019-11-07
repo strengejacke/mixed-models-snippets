@@ -53,7 +53,7 @@ The following code snippets show how to translate the Equations from [@bell_fixe
 
 ```{r message=FALSE}
 library(glmmTMB)
-library(sjmisc)
+library(parameters)
 library(sjPlot)
 library(lfe)
 
@@ -76,7 +76,7 @@ _Sourcecode and data are available [here](https://github.com/strengejacke/mixed-
 ## "Classical" growth-model for longitudinal data
 
 ```{r}
-m1 <- glmmTMB(
+model_re <- glmmTMB(
   QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID),
   data = d,
   REML = TRUE
@@ -90,21 +90,24 @@ Next is a model from Eq. 10, which includes the _"de-meaned"_ time-varying varia
 ```{r}
 # compute mean of "x_tv" for each subject (ID) and
 # then "de-mean" x_tv
-d <- de_mean(d, x_tv, QoL, grp = ID)
+d <- cbind(
+  d,
+  demean(d, select = c("x_tv", "QoL"), group = "ID") # from package "parameters"
+)
 ```
 
 Now we have:
 
-  * `x_tv_gm` : time-varying variable with the mean of `x_tv` accross all time-points, for each patient (ID).
-  * `x_tv_dm` : the de-meaned time-varying variable `x_tv`
+  * `x_tv_between` : time-varying variable with the mean of `x_tv` accross all time-points, for each patient (ID).
+  * `x_tv_within` : the de-meaned time-varying variable `x_tv`
 
-`QoL_gm` and `QoL_dm` are used to test different FE-models, which are described later. In those models, I also use a "de-meaned" response variable without the group-variable (`ID`) as fixed effect (see Equation 6 in the paper).
+`QoL_between` and `QoL_within` are used to test different FE-models, which are described later. In those models, I also use a "de-meaned" response variable without the group-variable (`ID`) as fixed effect (see Equation 6 in the paper).
 
 ## The complex random-effect-within-between model (REWB)
 
-Eq. 10 suggests allowing the "within-effect" (de-meaned) vary across individuals, that's why `x_tv_dm` is added as random slope as well.
+Eq. 10 suggests allowing the "within-effect" (de-meaned) vary across individuals, that's why `x_tv_within` is added as random slope as well.
 
-Here, the estimate of `x_tv_dm` indicates the _within-subject_ effect, while the estimate of `x_tv_gm` indicates the _between-subject_ effect. This model also allows for heterogenity across level-2 units, that's why `x_tv_dm` also appears in the random effects. The estimates of `z1_ti`
+Here, the estimate of `x_tv_within` indicates the _within-subject_ effect, while the estimate of `x_tv_between` indicates the _between-subject_ effect. This model also allows for heterogenity across level-2 units, that's why `x_tv_within` also appears in the random effects. The estimates of `z1_ti`
  and `z2_ti` also indicate a _between-subject_ effect, as this is a level-2 variable, which cannot have a within-subject effect.
 
 
@@ -118,52 +121,52 @@ knitr::asis_output(f)
 ```
 
 ```{r echo=FALSE}
-f <- "<ul><li>x<sub>it</sub> - &#x035E;x<sub>i</sub> is the de-meaned predictor, <em>x_tv_dm</em></li><li>&#x035E;x<sub>i</sub> is the group-meaned predictor, <em>x_tv_gm</em></li><li>&beta;<sub>1W</sub> is the coefficient for x_tv_dm (within-subject)</li><li>&beta;<sub>2B</sub> is the coefficient for x_tv_gm (bewteen-subject)</li><li>&beta;<sub>3</sub> is the coefficient for `z1_ti` or `z2_ti` (bewteen-subject)</li></ul>"
+f <- "<ul><li>x<sub>it</sub> - &#x035E;x<sub>i</sub> is the de-meaned predictor, <em>x_tv_within</em></li><li>&#x035E;x<sub>i</sub> is the group-meaned predictor, <em>x_tv_between</em></li><li>&beta;<sub>1W</sub> is the coefficient for x_tv_within (within-subject)</li><li>&beta;<sub>2B</sub> is the coefficient for x_tv_between (bewteen-subject)</li><li>&beta;<sub>3</sub> is the coefficient for `z1_ti` or `z2_ti` (bewteen-subject)</li></ul>"
 knitr::asis_output(f)
 ```
 
 
 ```{r warning=FALSE}
 # Model fits...
-m2 <- glmmTMB(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm | ID),
+model_complex_rewb <- glmmTMB(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time + x_tv_within | ID),
   data = d,
   REML = TRUE
 )
 
 # An alternative could be to model the random effects as not correlated.
-m3 <- glmmTMB(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
+model_complex_rewb_2 <- glmmTMB(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time + x_tv_within || ID),
   REML = TRUE,
   data = d
 )
 
 # here we get an error message when calling the summary(). The 
 # model can't compute standard errors. So we don't use this model.
-# m3b <- glmmTMB(
-#   QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + 
-#     (1 + time | ID) + (1 + x_tv_dm | ID),
+# model_complex_rewb_2b <- glmmTMB(
+#   QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + 
+#     (1 + time | ID) + (1 + x_tv_within | ID),
 #   data = d,
 #   REML = TRUE
 # )
 
 # an alternative would be to assume independence between random slopes
 # and no covariance...
-m3c <- glmmTMB(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti +
-    (1 + time | ID) + (0 + x_tv_dm | ID),
+model_complex_rewb_2c <- glmmTMB(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti +
+    (1 + time | ID) + (0 + x_tv_within | ID),
   data = d,
   REML = TRUE
 )
 ```
 
-We compare all model fits, but we go on with `m2` for now... Note that in the [same examples with `lmer()`](random-effects-within-between-effects-model.html), we took `m3` where the random parts were `(1 + time | ID) + (1 + x_tv_dm | ID)`, like in the above model `m3b` - however, model `m3b` has serious problems with calculating the standard errors. Model `m2` comes closest to the results from the lme4-model `m3`.
+We compare all model fits, but we go on with `model_complex_rewb` for now... Note that in the [same examples with `lmer()`](random-effects-within-between-effects-model.html), we took the model where the random parts were `(1 + time | ID) + (1 + x_tv_within | ID)`, like in the above model `model_complex_rewb_2b` - however, model `model_complex_rewb_2b` has serious problems with calculating the standard errors. Model `model_complex_rewb` comes closest to the results from the lme4-model `model_complex_rewb_2`.
 
 #### Table 1: Comparison of complex REWB-Models
 
 ```{r message=FALSE}
 tab_model(
-  m2, m3, m3c,
+  model_complex_rewb, model_complex_rewb_2, model_complex_rewb_2c,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -178,7 +181,7 @@ tab_model(
 
 After email correspondance, the paper's authors suggest that, depending on the research interest and necessary complexity of the model, a "simple" random-slope might be suitable as well. As stated in the paper, this is useful if homogenity across level-2 units is assumed. This model usually yields the same results as a FE-model, however, we additionally have information about the random effects - and the model can incorporate time-invariant covariates.
 
-Again, the estimate of `x_tv_dm` indicates the within-subject effect, while the estimate of `x_tv_gm` indicates the between-subject effect.
+Again, the estimate of `x_tv_within` indicates the within-subject effect, while the estimate of `x_tv_between` indicates the between-subject effect.
 
 ### Model from Equation 2
 
@@ -189,14 +192,14 @@ knitr::asis_output(f)
 
 
 ```{r}
-m4 <- glmmTMB(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
+model_simple_rewb <- glmmTMB(
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time | ID),
   data = d,
   REML = TRUE
 )
 ```
 
-An alternativ would be the **Mundlak** model. Here, the estimate of `x_tv` indicates the _within-subject_ effect, while the estimate of `x_tv_gm` indicates the _contextual_ effect.
+An alternativ would be the **Mundlak** model. Here, the estimate of `x_tv` indicates the _within-subject_ effect, while the estimate of `x_tv_between` indicates the _contextual_ effect.
 
 ### Model from Equation 3
 
@@ -206,14 +209,14 @@ knitr::asis_output(f)
 ```
 
 ```{r}
-m5 <- glmmTMB(
-  QoL ~ time + age + x_tv + x_tv_gm + z1_ti + z2_ti + (1 + time | ID),
+model_mundlak <- glmmTMB(
+  QoL ~ time + age + x_tv + x_tv_between + z1_ti + z2_ti + (1 + time | ID),
   data = d,
   REML = TRUE
 )
 ```
 
-The contextual effect, i.e. the coefficient for `x_tv_gm`, indicates the effect of an individual (at level 1) that moves from one level-2 group into another one. In the above model, or in general: in case of longitudinal data, the contextual effect is meaningless, as level-2 predictors are individuals (or subjects) themselves, and by definition cannot "move" to another individual. Therefor, the REWB-model is more informative.
+The contextual effect, i.e. the coefficient for `x_tv_between`, indicates the effect of an individual (at level 1) that moves from one level-2 group into another one. In the above model, or in general: in case of longitudinal data, the contextual effect is meaningless, as level-2 predictors are individuals (or subjects) themselves, and by definition cannot "move" to another individual. Therefor, the REWB-model is more informative.
 
 ## Comparison of models
 
@@ -223,7 +226,7 @@ In table 2, we compare the "classical" RE-model, the complex REWB-model, the "si
 
 ```{r message=FALSE}
 tab_model(
-  m1, m2, m4, m5,
+  model_re, model_complex_rewb, model_simple_rewb, model_mundlak,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -236,12 +239,12 @@ tab_model(
 
 ## Check if a REWB- or simple RE-model suitable
 
-If the estimates of the within- and between-effect (`x_tv_dm` and `x_tv_gm`) are (almost) identical, or if the contextual effect (`x_tv_gm`) in the **Mundlak**-model is zero and doesn't give a significant improvement for the model, you can also use a simple RE-model.
+If the estimates of the within- and between-effect (`x_tv_within` and `x_tv_between`) are (almost) identical, or if the contextual effect (`x_tv_between`) in the **Mundlak**-model is zero and doesn't give a significant improvement for the model, you can also use a simple RE-model.
 
 A simple way to check this is a likelihood-ratio test between the simple RE-model and the Mundlak-model:
 
 ```{r}
-anova(m1, m5)
+anova(model_re, model_mundlak)
 ```
 
 Here we see a significant improvement of the Mundlak-model over the simple RE-model, indicating that it makes sense to model within- and between-subjects effects, i.e. to apply a REWB-model.
@@ -258,14 +261,14 @@ knitr::asis_output(f)
 
 ```{r}
 # Model from Equation 5
-m6 <- felm(
-  QoL ~ time + x_tv_dm | ID,
+model_fe_ID <- felm(
+  QoL ~ time + x_tv_within | ID,
   data = d
 )
 
 # same as this lm-model
-# m6a <- lm(
-#   QoL ~ 0 + time + x_tv_dm + ID,
+# model_fe_ID <- lm(
+#   QoL ~ 0 + time + x_tv_within + ID,
 #   data = d
 # )
 ```
@@ -280,14 +283,14 @@ knitr::asis_output(f)
 
 ```{r}
 # Model from Equation 6
-m7 <- felm(
-  QoL_dm ~ time + x_tv_dm,
+model_fe_y_within <- felm(
+  QoL_within ~ time + x_tv_within,
   data = d
 )
 
 # or ...
-# m7 <- lm(
-#   QoL_dm ~ 0 + time + x_tv_dm,
+# model_fe_y_within <- lm(
+#   QoL_within ~ 0 + time + x_tv_within,
 #   data = d
 # )
 ```
@@ -295,27 +298,27 @@ m7 <- felm(
 We compare the results from the FE-models with a simple RE-model and the REWB-model.
 
 ```{r}
-m8 <- glmmTMB(
-  QoL ~ time + x_tv_dm + x_tv_gm + (1 | ID),
+model_re_2 <- glmmTMB(
+  QoL ~ time + x_tv_within + x_tv_between + (1 | ID),
   data = d,
   REML = TRUE
 )
 
 # Compare with complex REWB-model
-m9 <- glmmTMB(
-  QoL ~ time + x_tv_dm + x_tv_gm + (1 + time + x_tv_dm | ID),
+model_complex_rewb3 <- glmmTMB(
+  QoL ~ time + x_tv_within + x_tv_between + (1 + time + x_tv_within | ID),
   data = d,
   REML = TRUE
 )
 ```
 
-As we can see, the estimates of the FE-models and the RE-model are identical. However, the estimates from the REWB-model differ. This is because the time-varying predictors, the within-subject effect `x_tv_dm`, is allowed to vary between subjects as well (i.e. it is modelled as random slope).
+As we can see, the estimates of the FE-models and the RE-model are identical. However, the estimates from the REWB-model differ. This is because the time-varying predictors, the within-subject effect `x_tv_within`, is allowed to vary between subjects as well (i.e. it is modelled as random slope).
 
 #### Table 3: Comparison of FE- and RE-models
 
 ```{r message=FALSE}
 tab_model(
-  m6, m7, m8, m9,
+  model_fe_ID, model_fe_y_within, model_re_2, model_complex_rewb3,
   show.ci = FALSE, 
   show.se = TRUE, 
   auto.label = FALSE, 
@@ -333,29 +336,32 @@ The random effects structure, i.e. how to model random slopes and intercepts and
 
 In case of convergence problems or singular fits, note that changing the optimizer might help. In this context, some models ran fine in [**lme4**](random-effects-within-between-effects-model.html), while other models that had problems being fitted in _lme4_ ran without any problems in _glmmTMB_.
 
-```{r}
+```{r eval=FALSE}
 # compute group-mean of "x_tv" for each subject (ID) and
 # then "de-mean" x_tv
-d <- de_mean(d, x_tv, QoL, grp = ID)
+d <- cbind(
+  d,
+  demean(d, select = c("x_tv", "QoL"), group = "ID") # from package "parameters"
+)
 
 # This model gives a convergence warning:
 # Model convergence problem; singular convergence (7)
 m <- glmmTMB(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm | ID),
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time + x_tv_within | ID),
   data = d,
   REML = TRUE
 )
 
 # An alternative could be to model the random effects as not correlated.
 m <- glmmTMB(
-  QoL ~ time + age + x_tv_dm + x_tv_gm + z1_ti + z2_ti + (1 + time + x_tv_dm || ID),
+  QoL ~ time + age + x_tv_within + x_tv_between + z1_ti + z2_ti + (1 + time + x_tv_within || ID),
   REML = TRUE,
   data = d
 )
 ```
 
-* `x_tv_dm` indicates the _within-subject_ effect
-* `x_tv_gm` indicates the _between-subject_ effect
+* `x_tv_within` indicates the _within-subject_ effect
+* `x_tv_between` indicates the _between-subject_ effect
 * `z1_ti` and `z2_ti` also indicate a _between-subject_ effect
 
 ## Further critics of the FE-approach
