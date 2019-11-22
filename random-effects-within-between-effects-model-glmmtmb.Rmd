@@ -116,7 +116,7 @@ Here, the estimate of `x_tv_within` indicates the _within-subject_ effect, while
 Here is the equation 10 from Bell et al. 2018:
 
 ```{r echo=FALSE}
-f <- "y<sub>it</sub> = &beta;<sub>0</sub> + &beta;<sub>1W</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &beta;<sub>2B</sub> &#x035E;x<sub>i</sub> + &beta;<sub>3</sub> z<sub>i</sub> + &upsilon;<sub>i0</sub> + &upsilon;<sub>i0</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &epsilon;<sub>it</sub>"
+f <- "y<sub>it</sub> = &beta;<sub>0</sub> + &beta;<sub>1W</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &beta;<sub>2B</sub> &#x035E;x<sub>i</sub> + &beta;<sub>3</sub> z<sub>i</sub> + &upsilon;<sub>i0</sub> + &upsilon;<sub>i1</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + &epsilon;<sub>it</sub>"
 knitr::asis_output(f)
 ```
 

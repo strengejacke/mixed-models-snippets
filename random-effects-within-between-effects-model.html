@@ -476,7 +476,7 @@ d &lt;- cbind(
 <div id="model-from-equation-10" class="section level3">
 <h3>Model from Equation 10</h3>
 <p>Here is the equation 10 from Bell et al. 2018:</p>
-<p>y<sub>it</sub> = β<sub>0</sub> + β<sub>1W</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + β<sub>2B</sub> ͞x<sub>i</sub> + β<sub>3</sub> z<sub>i</sub> + υ<sub>i0</sub> + υ<sub>i0</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + ε<sub>it</sub></p>
+<p>y<sub>it</sub> = β<sub>0</sub> + β<sub>1W</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + β<sub>2B</sub> ͞x<sub>i</sub> + β<sub>3</sub> z<sub>i</sub> + υ<sub>i0</sub> + υ<sub>i1</sub> (x<sub>it</sub> - ͞x<sub>i</sub>) + ε<sub>it</sub></p>
 <ul>
 <li>
 x<sub>it</sub> - ͞x<sub>i</sub> is the de-meaned predictor, <em>x_tv_within</em>
@@ -1529,12 +1529,9 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 #&gt; model_re: QoL ~ time + age + x_tv + z1_ti + z2_ti + (1 + time | ID)
 #&gt; model_mundlak: QoL ~ time + age + x_tv + x_tv_between + z1_ti + z2_ti + (1 + 
 #&gt; model_mundlak:     time | ID)
-#&gt;               Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)
-#&gt; model_re      10 4662.6 4705.9 -2321.3   4642.6                         
-#&gt; model_mundlak 11 4649.5 4697.2 -2313.8   4627.5 15.081      1   0.000103
-#&gt;                  
-#&gt; model_re         
-#&gt; model_mundlak ***
+#&gt;               Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)    
+#&gt; model_re      10 4662.6 4705.9 -2321.3   4642.6                             
+#&gt; model_mundlak 11 4649.5 4697.2 -2313.8   4627.5 15.081      1   0.000103 ***
 #&gt; ---
 #&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Here we see a significant improvement of the Mundlak-model over the simple RE-model, indicating that it makes sense to model within- and between-subjects effects, i.e. to apply a REWB-model.</p>
