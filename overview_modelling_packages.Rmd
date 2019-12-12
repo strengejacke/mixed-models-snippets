@@ -1,5 +1,5 @@
 ---
-title: "Overiew of R Modelling Packages"
+title: "Overview of R Modelling Packages"
 author: "Daniel Lüdecke"
 output: html_document
 ---
@@ -15,14 +15,19 @@ tab <- docx_extract_tbl(docx)
 colnames(tab) <- c("Nature of Response", "Example", "Type of Regression", "R package or function")
 ```
 
-This is an overview of R packages and functions for fitting various different types of regression models. For each row, the upper cells in the last column (packages and functions refer to "simple" models, while the lower cells refer to their mixed models counterpart (if available and known).
+This is an overview of R packages and functions for fitting various different types of regression models. For each row, the upper cells in the last column (_packages and functions_) refer to "simple" models, while the lower cells refer to their mixed models counterpart (if available and known).
 
+This overview raises no claims towards completeness of available modelling packages. Rather, it shows commonly or more often used packages for those tasks, but there a plenty of other packages as well (that might even perform better in doing those tasks - if you're aware of such packages or think that an important package or function is missing, please [file an issue](https://github.com/strengejacke/mixed-models-snippets/issues)).
+
+## Modelling Packages
 
 ```{r echo=FALSE}
 kable(tab)
 ```
 
-Included packages for non-mixed models:
+_Note that ratios or proportions from count data, like `cbind(trials, success)`, are modelled as logistic regression with `glm(cbind(trials, success), family=binomial())`, while ratios from continuous data where the response ranges from 0 to 1 are modelled using beta-regression._
+
+## Included packages for non-mixed models:
 
   - Base R: `lm()`, `glm()`
   - [AER](https://CRAN.R-project.org/package=AER): `tobit()`
@@ -37,7 +42,7 @@ Included packages for non-mixed models:
   - [pscl](https://CRAN.R-project.org/package=pscl): `zeroinfl()`, `hurdle()`
   - [VGAM](https://CRAN.R-project.org/package=VGAM): `vglm()`
 
-Included packages for mixed models:
+## Included packages for mixed models:
 
   - [glmmTMB](https://CRAN.R-project.org/package=glmmTMB): `glmmTMB()`
   - [lme4](https://CRAN.R-project.org/package=lme4): `lmer()`, `glmer()`, `glmer.nb()`
