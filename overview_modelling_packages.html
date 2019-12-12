@@ -457,7 +457,7 @@ summary {
 <td align="left">Count data with very many zeros (inflation)</td>
 <td align="left">see count data, but response is modelled as mixture of Bernoulli Poisson distribution</td>
 <td align="left">zero-inflated</td>
-<td align="left">zeroinfl()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/pscl/versions/1.5.2/topics/zeroinfl"><code>zeroinfl()</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zip/" class="uri">https://stats.idre.ucla.edu/r/dae/zip/</a></td>
 </tr>
 <tr class="even">
@@ -471,7 +471,7 @@ summary {
 <td align="left">Count data, with very many zeros (inflation) and overdispersion</td>
 <td align="left">Number of usage, counts of events (with higher variance than mean of response)</td>
 <td align="left">zero-inflated negative binomial</td>
-<td align="left">zeroinfl(dist=“negbin”)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/pscl/versions/1.5.2/topics/zeroinfl"><code>zeroinfl(dist=&quot;negbin&quot;)</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zinb/" class="uri">https://stats.idre.ucla.edu/r/dae/zinb/</a></td>
 </tr>
 <tr class="even">
@@ -485,7 +485,7 @@ summary {
 <td align="left">Count data with very many zeros</td>
 <td align="left">see count data, but Bernoulli probability governs whether response is zero or positive</td>
 <td align="left">hurdle</td>
-<td align="left">hurdle()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/pscl/versions/1.5.2/topics/hurdle"><code>hurdle()</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zero-truncated-poisson/" class="uri">https://stats.idre.ucla.edu/r/dae/zero-truncated-poisson/</a></td>
 </tr>
 <tr class="even">
@@ -498,8 +498,8 @@ summary {
 <tr class="odd">
 <td align="left">Proportion / Ratio (without zero and one)</td>
 <td align="left">Percentages, proportions</td>
-<td align="left">Beta</td>
-<td align="left">betareg()</td>
+<td align="left">Beta <em>(see note below)</em></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/betareg/versions/3.1-2/topics/betareg"><code>betareg()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
@@ -520,28 +520,28 @@ summary {
 <td align="left">Ordinal</td>
 <td align="left">Likert scale, worse/ok/better</td>
 <td align="left">ordinal, proportional odds</td>
-<td align="left"><a href="https://www.rdocumentation.org/packages/MASS/versions/7.3-47/topics/polr"><code>polr()</code></a>, clm()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/MASS/versions/7.3-47/topics/polr"><code>polr()</code></a>, <a href="https://www.rdocumentation.org/packages/ordinal/versions/2019.4-25/topics/clm"><code>clm()</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/</a></td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">clmm(), mixor(), MCMCglmm()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/ordinal/versions/2019.4-25/topics/clmm"><code>clmm()</code></a>, <a href="https://www.rdocumentation.org/packages/mixor/versions/1.0.4/topics/mixor"><code>mixor()</code></a>, <a href="https://www.rdocumentation.org/packages/MCMCglmm/versions/2.29/topics/MCMCglmm"><code>MCMCglmm()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left">Cumulative, multinomial</td>
 <td align="left">No natural order of categories, like red/green/blue</td>
 <td align="left">cumulative link, multinomial</td>
-<td align="left">multinom(), clm(),bracl(), brmultinom()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/nnet/versions/7.3-12/topics/multinom"><code>multinom()</code></a>, <a href="https://www.rdocumentation.org/packages/ordinal/versions/2019.4-25/topics/clm"><code>clm()</code></a>, <a href="https://www.rdocumentation.org/packages/brglm2/versions/0.6.0/topics/bracl"><code>bracl()</code></a>, <a href="https://www.rdocumentation.org/packages/brglm2/versions/0.6.0/topics/brmultinom"><code>brmultinom()</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/</a></td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">clmm(), mixor(), MCMCglmm()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/ordinal/versions/2019.4-25/topics/clmm"><code>clmm()</code></a>, <a href="https://www.rdocumentation.org/packages/mixor/versions/1.0.4/topics/mixor"><code>mixor()</code></a>, <a href="https://www.rdocumentation.org/packages/MCMCglmm/versions/2.29/topics/MCMCglmm"><code>MCMCglmm()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
@@ -562,7 +562,7 @@ summary {
 <td align="left">Continuous, but truncated or outliers</td>
 <td align="left"></td>
 <td align="left">truncated</td>
-<td align="left">censReg(), tobit(), vglm(tobit())</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/censReg/versions/0.5-22/topics/censReg"><code>censReg()</code></a>, <a href="https://www.rdocumentation.org/packages/AER/versions/1.2-8/topics/tobit"><code>tobit()</code></a>, <a href="https://www.rdocumentation.org/packages/VGAM/versions/1.1-2/topics/vglm"><code>vglm(tobit())</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/tobit-models/" class="uri">https://stats.idre.ucla.edu/r/dae/tobit-models/</a>, <a href="https://stats.idre.ucla.edu/r/dae/truncated-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/truncated-regression/</a></td>
 </tr>
 <tr class="odd">
