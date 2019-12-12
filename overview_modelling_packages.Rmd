@@ -21,3 +21,26 @@ This is an overview of R packages and functions for fitting various different ty
 ```{r echo=FALSE}
 kable(tab)
 ```
+
+Included packages for non-mixed models:
+
+  - Base R: `lm()`, `glm()`
+  - [AER](https://CRAN.R-project.org/package=AER): `tobit()`
+  - [aod](https://CRAN.R-project.org/package=aod): `betabin()`
+  - [betareg](https://CRAN.R-project.org/package=betareg): `betareg()`
+  - [brglm2](https://CRAN.R-project.org/package=brglm2): `bracl()`, `brmultinom()`
+  - [censReg](https://CRAN.R-project.org/package=censReg): `censReg()`
+  - [HRQoL](https://CRAN.R-project.org/package=HRQoL): `HRQoL()`
+  - [MASS](https://CRAN.R-project.org/package=MASS): `glm.nb()`, `polr()`
+  - [nnet](https://CRAN.R-project.org/package=nnet): `multinom()`
+  - [ordinal](https://CRAN.R-project.org/package=ordinal): `clm()`, `clm2()`
+  - [pscl](https://CRAN.R-project.org/package=pscl): `zeroinfl()`, `hurdle()`
+  - [VGAM](https://CRAN.R-project.org/package=VGAM): `vglm()`
+
+Included packages for mixed models:
+
+  - [glmmTMB](https://CRAN.R-project.org/package=glmmTMB): `glmmTMB()`
+  - [lme4](https://CRAN.R-project.org/package=lme4): `lmer()`, `glmer()`, `glmer.nb()`
+  - [MCMCglmm](https://CRAN.R-project.org/package=MCMCglmm): `MCMCglmm()`
+  - [mixor](https://CRAN.R-project.org/package=mixor): `mixor()`
+  - [ordinal](https://CRAN.R-project.org/package=ordinal): `clmm()`, `clmm2()`

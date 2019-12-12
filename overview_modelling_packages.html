@@ -380,9 +380,9 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Kontinuierlich</td>
-<td align="left">Alter, Lebensqualität</td>
-<td align="left">Linear</td>
+<td align="left">Continuous</td>
+<td align="left">Age, Quality of Life</td>
+<td align="left">linear</td>
 <td align="left">lm()</td>
 </tr>
 <tr class="even">
@@ -392,9 +392,9 @@ summary {
 <td align="left">lmer(), glmmTMB()</td>
 </tr>
 <tr class="odd">
-<td align="left">Binär</td>
-<td align="left">Wirksam ja/neu</td>
-<td align="left">Binär logistisch</td>
+<td align="left">Binary</td>
+<td align="left">Success yes/no</td>
+<td align="left">binary logistic</td>
 <td align="left">glm(family=binomial)</td>
 </tr>
 <tr class="even">
@@ -404,9 +404,9 @@ summary {
 <td align="left">glmer(), glmmTMB()</td>
 </tr>
 <tr class="odd">
-<td align="left">Versuche</td>
-<td align="left">30 Versuche, 20 erfolgreich</td>
-<td align="left">Logistische</td>
+<td align="left">Trials</td>
+<td align="left">20 successes out of 30 trials</td>
+<td align="left">logistic</td>
 <td align="left">glm(cbind(trial,success), family=binomial)</td>
 </tr>
 <tr class="even">
@@ -416,8 +416,8 @@ summary {
 <td align="left">glmer(), glmmTMB()</td>
 </tr>
 <tr class="odd">
-<td align="left">Zähldaten</td>
-<td align="left">Anzahl, Inanspruchnahme</td>
+<td align="left">Count data</td>
+<td align="left">Number of usage, counts of events</td>
 <td align="left">Poisson</td>
 <td align="left">glm(family=poisson)</td>
 </tr>
@@ -428,9 +428,9 @@ summary {
 <td align="left">glmer(), glmmTMB()</td>
 </tr>
 <tr class="odd">
-<td align="left">Zähldaten, mit vielen Nullen</td>
-<td align="left">Anzahl, Inanspruchnahme</td>
-<td align="left">Negative Binomial</td>
+<td align="left">Count data, with excess zeros</td>
+<td align="left">Number of usage, counts of events</td>
+<td align="left">negative binomial</td>
 <td align="left">glm.nb()</td>
 </tr>
 <tr class="even">
@@ -440,9 +440,9 @@ summary {
 <td align="left">glmer.nb(), glmmTMB(family=nbinom1)</td>
 </tr>
 <tr class="odd">
-<td align="left">Zähldaten, mit sehr vielen Nullen</td>
-<td align="left">Anzahl, Inanspruchnahme</td>
-<td align="left">Zero-Inflated</td>
+<td align="left">Count data with very many zeros (inflation)</td>
+<td align="left">see count data, but response is modelled as mixture of Bernoulli Poisson distribution</td>
+<td align="left">zero-inflated</td>
 <td align="left">zeroinfl()</td>
 </tr>
 <tr class="even">
@@ -452,9 +452,9 @@ summary {
 <td align="left">glmmTMB(ziformula, family=poisson)</td>
 </tr>
 <tr class="odd">
-<td align="left">Zähldaten, mit sehr vielen Nullen</td>
-<td align="left">Anzahl, Inanspruchnahme</td>
-<td align="left">Hurdle</td>
+<td align="left">Count data with very many zeros</td>
+<td align="left">see count data, but Bernoulli probability governs whether response is zero or positive</td>
+<td align="left">hurdle</td>
 <td align="left">hurdle()</td>
 </tr>
 <tr class="even">
@@ -464,8 +464,8 @@ summary {
 <td align="left">glmmTMB(family=truncated_*)</td>
 </tr>
 <tr class="odd">
-<td align="left">Proportion / Ratio (ohne Null und Eins)</td>
-<td align="left">Prozentwerte, Anteile (ohne Null und Eins)</td>
+<td align="left">Proportion / Ratio (without zero and one)</td>
+<td align="left">Percentages, proportions</td>
 <td align="left">Beta</td>
 <td align="left">betareg()</td>
 </tr>
@@ -477,7 +477,7 @@ summary {
 </tr>
 <tr class="odd">
 <td align="left">Ordinal</td>
-<td align="left">Likert-Skalen, gut/mittel/schlecht</td>
+<td align="left">Likert scale, worse/ok/better</td>
 <td align="left">Ordinal, Proportional Odds</td>
 <td align="left">polr(), clm()</td>
 </tr>
@@ -489,7 +489,7 @@ summary {
 </tr>
 <tr class="odd">
 <td align="left">Cumulative, multinomial</td>
-<td align="left">rot/grün/blau</td>
+<td align="left">No natural order of categories, like red/green/blue</td>
 <td align="left">Cumulative link, multinomial</td>
 <td align="left">multinom(), clm(),bracl(), brmultinom()</td>
 </tr>
@@ -500,8 +500,8 @@ summary {
 <td align="left">clmm(), mixor(), MCMCglmm()</td>
 </tr>
 <tr class="odd">
-<td align="left">Kontinuierlich, rechtsschief</td>
-<td align="left">Finanzdaten, Reaktionszeiten</td>
+<td align="left">Continuous, right-skewed</td>
+<td align="left">Financial data, reaction times</td>
 <td align="left">Gamma</td>
 <td align="left">glm(family=Gamma)</td>
 </tr>
@@ -512,13 +512,13 @@ summary {
 <td align="left">glmer(), glmmTMB()</td>
 </tr>
 <tr class="odd">
-<td align="left">Proportion / Ratio (mit Null und Eins)</td>
-<td align="left">Prozentwerte, Anteile (mit Null und Eins)</td>
+<td align="left">Proportion / Ratio (including zero and one)</td>
+<td align="left">Percentages, proportions</td>
 <td align="left">Beta-Binomial</td>
-<td align="left"></td>
+<td align="left">BBreg(), betabin()</td>
 </tr>
 <tr class="even">
-<td align="left">Kontinuierlich, aber begrenzter Bereich / extreme Ausreißer</td>
+<td align="left">Continuous, but truncated or outliers</td>
 <td align="left"></td>
 <td align="left">Truncated</td>
 <td align="left">censReg(), tobit()</td>
@@ -531,6 +531,29 @@ summary {
 </tr>
 </tbody>
 </table>
+<p>Included packages for non-mixed models:</p>
+<ul>
+<li>Base R: <code>lm()</code>, <code>glm()</code></li>
+<li><a href="https://CRAN.R-project.org/package=AER">AER</a>: <code>tobit()</code></li>
+<li><a href="https://CRAN.R-project.org/package=aod">aod</a>: <code>betabin()</code></li>
+<li><a href="https://CRAN.R-project.org/package=betareg">betareg</a>: <code>betareg()</code></li>
+<li><a href="https://CRAN.R-project.org/package=brglm2">brglm2</a>: <code>bracl()</code>, <code>brmultinom()</code></li>
+<li><a href="https://CRAN.R-project.org/package=censReg">censReg</a>: <code>censReg()</code></li>
+<li><a href="https://CRAN.R-project.org/package=HRQoL">HRQoL</a>: <code>HRQoL()</code></li>
+<li><a href="https://CRAN.R-project.org/package=MASS">MASS</a>: <code>glm.nb()</code>, <code>polr()</code></li>
+<li><a href="https://CRAN.R-project.org/package=nnet">nnet</a>: <code>multinom()</code></li>
+<li><a href="https://CRAN.R-project.org/package=ordinal">ordinal</a>: <code>clm()</code>, <code>clm2()</code></li>
+<li><a href="https://CRAN.R-project.org/package=pscl">pscl</a>: <code>zeroinfl()</code>, <code>hurdle()</code></li>
+<li><a href="https://CRAN.R-project.org/package=VGAM">VGAM</a>: <code>vglm()</code></li>
+</ul>
+<p>Included packages for mixed models:</p>
+<ul>
+<li><a href="https://CRAN.R-project.org/package=glmmTMB">glmmTMB</a>: <code>glmmTMB()</code></li>
+<li><a href="https://CRAN.R-project.org/package=lme4">lme4</a>: <code>lmer()</code>, <code>glmer()</code>, <code>glmer.nb()</code></li>
+<li><a href="https://CRAN.R-project.org/package=MCMCglmm">MCMCglmm</a>: <code>MCMCglmm()</code></li>
+<li><a href="https://CRAN.R-project.org/package=mixor">mixor</a>: <code>mixor()</code></li>
+<li><a href="https://CRAN.R-project.org/package=ordinal">ordinal</a>: <code>clmm()</code>, <code>clmm2()</code></li>
+</ul>
 
 
 
