@@ -379,6 +379,7 @@ summary {
 <th align="left">Example</th>
 <th align="left">Type of Regression</th>
 <th align="left">R package or function</th>
+<th align="left">Example Webpage</th>
 </tr>
 </thead>
 <tbody>
@@ -386,150 +387,189 @@ summary {
 <td align="left">Continuous</td>
 <td align="left">Age, Quality of Life</td>
 <td align="left">linear</td>
-<td align="left">lm()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm"><code>lm()</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">lmer(), glmmTMB()</td>
+<td align="left">lmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Binary</td>
 <td align="left">Success yes/no</td>
 <td align="left">binary logistic</td>
 <td align="left">glm(family=binomial)</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/logit-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/logit-regression/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), glmmTMB()</td>
+<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Trials</td>
 <td align="left">20 successes out of 30 trials</td>
 <td align="left">logistic</td>
 <td align="left">glm(cbind(trial,success), family=binomial)</td>
+<td align="left"><a href="http://had.co.nz/notes/modelling/logistic-regression.html" class="uri">http://had.co.nz/notes/modelling/logistic-regression.html</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), glmmTMB()</td>
+<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Count data</td>
 <td align="left">Number of usage, counts of events</td>
 <td align="left">Poisson</td>
 <td align="left">glm(family=poisson)</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/poisson-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/poisson-regression/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), glmmTMB()</td>
+<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
-<td align="left">Count data, with excess zeros</td>
-<td align="left">Number of usage, counts of events</td>
+<td align="left">Count data, with excess zeros or overdispersion</td>
+<td align="left">Number of usage, counts of events (with higher variance than mean of response)</td>
 <td align="left">negative binomial</td>
 <td align="left">glm.nb()</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer.nb(), glmmTMB(family=nbinom1)</td>
+<td align="left">glmer.nb(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=nbinom)</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Count data with very many zeros (inflation)</td>
 <td align="left">see count data, but response is modelled as mixture of Bernoulli Poisson distribution</td>
 <td align="left">zero-inflated</td>
 <td align="left">zeroinfl()</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zip/" class="uri">https://stats.idre.ucla.edu/r/dae/zip/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmmTMB(ziformula, family=poisson)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(ziformula, family=poisson)</code></a></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Count data, with very many zeros (inflation) and overdispersion</td>
+<td align="left">Number of usage, counts of events (with higher variance than mean of response)</td>
+<td align="left">zero-inflated negative binomial</td>
+<td align="left">zeroinfl(dist=“negbin”)</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zinb/" class="uri">https://stats.idre.ucla.edu/r/dae/zinb/</a></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(ziformula, family=nbinom)</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Count data with very many zeros</td>
 <td align="left">see count data, but Bernoulli probability governs whether response is zero or positive</td>
 <td align="left">hurdle</td>
 <td align="left">hurdle()</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zero-truncated-poisson/" class="uri">https://stats.idre.ucla.edu/r/dae/zero-truncated-poisson/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmmTMB(family=truncated_*)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=truncated_*)</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Proportion / Ratio (without zero and one)</td>
 <td align="left">Percentages, proportions</td>
 <td align="left">Beta</td>
 <td align="left">betareg()</td>
+<td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmmTMB(family=beta)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=beta)</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Proportion / Ratio (including zero and one)</td>
 <td align="left">Percentages, proportions</td>
 <td align="left">Beta-Binomial</td>
-<td align="left">BBreg(), betabin()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/HRQoL/versions/1.0/topics/BBreg"><code>BBreg()</code></a>, <a href="https://www.rdocumentation.org/packages/aod/versions/1.3.1/topics/betabin"><code>betabin()</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left">Ordinal</td>
 <td align="left">Likert scale, worse/ok/better</td>
-<td align="left">Ordinal, Proportional Odds</td>
+<td align="left">ordinal, proportional odds</td>
 <td align="left">polr(), clm()</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/</a></td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left">clmm(), mixor(), MCMCglmm()</td>
+<td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left">Cumulative, multinomial</td>
 <td align="left">No natural order of categories, like red/green/blue</td>
-<td align="left">Cumulative link, multinomial</td>
+<td align="left">cumulative link, multinomial</td>
 <td align="left">multinom(), clm(),bracl(), brmultinom()</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/</a></td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left">clmm(), mixor(), MCMCglmm()</td>
+<td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left">Continuous, right-skewed</td>
 <td align="left">Financial data, reaction times</td>
 <td align="left">Gamma</td>
 <td align="left">glm(family=Gamma)</td>
+<td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), glmmTMB()</td>
+<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left">Continuous, but truncated or outliers</td>
 <td align="left"></td>
-<td align="left">Truncated</td>
+<td align="left">truncated</td>
 <td align="left">censReg(), tobit(), vglm(tobit())</td>
+<td align="left"><a href="https://stats.idre.ucla.edu/r/dae/tobit-models/" class="uri">https://stats.idre.ucla.edu/r/dae/tobit-models/</a>, <a href="https://stats.idre.ucla.edu/r/dae/truncated-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/truncated-regression/</a></td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left">Dirichlet</td>
+<td align="left"></td>
 <td align="left"></td>
 </tr>
 </tbody>

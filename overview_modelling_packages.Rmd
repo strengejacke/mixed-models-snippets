@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 docx <- read_docx("Regressionspakete.docx")
 tab <- docx_extract_tbl(docx)
-colnames(tab) <- c("Nature of Response", "Example", "Type of Regression", "R package or function")
+colnames(tab) <- c("Nature of Response", "Example", "Type of Regression", "R package or function", "Example Webpage")
 ```
 
 This is an overview of R packages and functions for fitting various different types of regression models. For each row, the upper cells in the last column (_packages and functions_) refer to "simple" models, while the lower cells refer to their mixed models counterpart (if available and known).
