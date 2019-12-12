@@ -49,3 +49,7 @@ _Note that ratios or proportions from count data, like `cbind(trials, success)`,
   - [MCMCglmm](https://CRAN.R-project.org/package=MCMCglmm): `MCMCglmm()`
   - [mixor](https://CRAN.R-project.org/package=mixor): `mixor()`
   - [ordinal](https://CRAN.R-project.org/package=ordinal): `clmm()`, `clmm2()`
+
+## Handout
+
+There is a [handout](regression_pkgs_handout.pdf) in PDF-format.

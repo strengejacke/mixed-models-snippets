@@ -394,63 +394,63 @@ summary {
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">lmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/lmer"><code>lmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Binary</td>
 <td align="left">Success yes/no</td>
 <td align="left">binary logistic</td>
-<td align="left">glm(family=binomial)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm"><code>glm(family=binomial)</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/logit-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/logit-regression/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Trials</td>
 <td align="left">20 successes out of 30 trials</td>
 <td align="left">logistic</td>
-<td align="left">glm(cbind(trial,success), family=binomial)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm"><code>glm(cbind(trial,success), family=binomial)</code></a></td>
 <td align="left"><a href="http://had.co.nz/notes/modelling/logistic-regression.html" class="uri">http://had.co.nz/notes/modelling/logistic-regression.html</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Count data</td>
 <td align="left">Number of usage, counts of events</td>
 <td align="left">Poisson</td>
-<td align="left">glm(family=poisson)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm"><code>glm(family=poisson)</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/poisson-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/poisson-regression/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left">Count data, with excess zeros or overdispersion</td>
 <td align="left">Number of usage, counts of events (with higher variance than mean of response)</td>
 <td align="left">negative binomial</td>
-<td align="left">glm.nb()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/MASS/versions/7.3-47/topics/glm.nb"><code>glm.nb()</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/</a></td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer.nb(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=nbinom)</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer.nb"><code>glmer.nb()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=nbinom)</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
@@ -520,7 +520,7 @@ summary {
 <td align="left">Ordinal</td>
 <td align="left">Likert scale, worse/ok/better</td>
 <td align="left">ordinal, proportional odds</td>
-<td align="left">polr(), clm()</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/MASS/versions/7.3-47/topics/polr"><code>polr()</code></a>, clm()</td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/" class="uri">https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/</a></td>
 </tr>
 <tr class="odd">
@@ -548,14 +548,14 @@ summary {
 <td align="left">Continuous, right-skewed</td>
 <td align="left">Financial data, reaction times</td>
 <td align="left">Gamma</td>
-<td align="left">glm(family=Gamma)</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm"><code>glm(family=Gamma)</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left">glmer(), <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
@@ -602,6 +602,10 @@ summary {
 <li><a href="https://CRAN.R-project.org/package=mixor">mixor</a>: <code>mixor()</code></li>
 <li><a href="https://CRAN.R-project.org/package=ordinal">ordinal</a>: <code>clmm()</code>, <code>clmm2()</code></li>
 </ul>
+</div>
+<div id="handout" class="section level2">
+<h2>Handout</h2>
+<p>There is a <a href="regression_pkgs_handout.pdf">handout</a> in PDF-format.</p>
 </div>
 
 
