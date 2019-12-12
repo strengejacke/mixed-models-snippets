@@ -1,0 +1,20 @@
+---
+title: "Overiew of R Modelling Packages"
+author: "Daniel Lüdecke"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(docxtractr)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+docx <- read_docx("Regressionspakete.docx")
+tab <- docx_extract_tbl(docx)
+colnames(tab) <- c("Nature of Response", "Example", "Type of Regression", "R package or function")
+```
+
+```{r echo=FALSE}
+kable(tab)
+```
