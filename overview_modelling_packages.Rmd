@@ -30,7 +30,7 @@ Included packages for non-mixed models:
   - [betareg](https://CRAN.R-project.org/package=betareg): `betareg()`
   - [brglm2](https://CRAN.R-project.org/package=brglm2): `bracl()`, `brmultinom()`
   - [censReg](https://CRAN.R-project.org/package=censReg): `censReg()`
-  - [HRQoL](https://CRAN.R-project.org/package=HRQoL): `HRQoL()`
+  - [HRQoL](https://CRAN.R-project.org/package=HRQoL): `BBreg()`
   - [MASS](https://CRAN.R-project.org/package=MASS): `glm.nb()`, `polr()`
   - [nnet](https://CRAN.R-project.org/package=nnet): `multinom()`
   - [ordinal](https://CRAN.R-project.org/package=ordinal): `clm()`, `clm2()`
