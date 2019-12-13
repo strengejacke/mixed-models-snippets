@@ -455,7 +455,7 @@ summary {
 </tr>
 <tr class="odd">
 <td align="left">Count data with very many zeros (inflation)</td>
-<td align="left">see count data, but response is modelled as mixture of Bernoulli Poisson distribution</td>
+<td align="left">see count data, but response is modelled as mixture of Bernoulli &amp; Poisson distribution (two sources of zeros)</td>
 <td align="left">zero-inflated</td>
 <td align="left"><a href="https://www.rdocumentation.org/packages/pscl/versions/1.5.2/topics/zeroinfl"><code>zeroinfl()</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zip/">UCLA</a></td>
@@ -482,8 +482,8 @@ summary {
 <td align="left"></td>
 </tr>
 <tr class="odd">
-<td align="left">Count data with very many zeros</td>
-<td align="left">see count data, but Bernoulli probability governs whether response is zero or positive</td>
+<td align="left">Count data, zero-truncated</td>
+<td align="left">see count data, but only for positive counts (hurdle component models zero-counts)</td>
 <td align="left">hurdle</td>
 <td align="left"><a href="https://www.rdocumentation.org/packages/pscl/versions/1.5.2/topics/hurdle"><code>hurdle()</code></a></td>
 <td align="left"><a href="https://stats.idre.ucla.edu/r/dae/zero-truncated-poisson/">UCLA</a></td>
