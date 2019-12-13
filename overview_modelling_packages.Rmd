@@ -35,6 +35,7 @@ _Note that ratios or proportions from count data, like `cbind(trials, success)`,
   - [betareg](https://CRAN.R-project.org/package=betareg): `betareg()`
   - [brglm2](https://CRAN.R-project.org/package=brglm2): `bracl()`, `brmultinom()`
   - [censReg](https://CRAN.R-project.org/package=censReg): `censReg()`
+  - [DirichletReg](https://CRAN.R-project.org/package=DirichletReg): `DirichReg()`
   - [HRQoL](https://CRAN.R-project.org/package=HRQoL): `BBreg()`
   - [MASS](https://CRAN.R-project.org/package=MASS): `glm.nb()`, `polr()`
   - [nnet](https://CRAN.R-project.org/package=nnet): `multinom()`
