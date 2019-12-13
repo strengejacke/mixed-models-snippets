@@ -53,3 +53,5 @@ _Note that ratios or proportions from count data, like `cbind(trials, success)`,
 ## Handout
 
 There is a [handout](regression_pkgs_handout.pdf) in PDF-format.
+
+![](by2-small.png)
