@@ -385,7 +385,7 @@ summary {
 <tbody>
 <tr class="odd">
 <td align="left">Continuous</td>
-<td align="left">Age, Quality of Life</td>
+<td align="left">Quality of Life, linear scales</td>
 <td align="left">linear</td>
 <td align="left"><a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm"><code>lm()</code></a></td>
 <td align="left"></td>
@@ -408,7 +408,7 @@ summary {
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer(family=binomial)</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=binomial)</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
@@ -422,7 +422,7 @@ summary {
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer(cbind(trial,success), family=binomial)</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(cbind(trial,success), family=binomial)</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
@@ -436,7 +436,7 @@ summary {
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/lme4/versions/1.1-21/topics/glmer"><code>glmer(family=poisson)</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=poisson)</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
@@ -583,7 +583,7 @@ summary {
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"><a href="https://www.rdocumentation.org/packages/cplm/versions/0.7-8/topics/cpglmm"><code>cpglmm()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/cplm/versions/0.7-8/topics/cpglmm"><code>cpglmm()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/0.2.3/topics/glmmTMB"><code>glmmTMB(family=tweedie)</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
