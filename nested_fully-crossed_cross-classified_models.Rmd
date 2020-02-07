@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 # Nested and Crossed Random Effects Models
 
-Say we have a model with a dependent variable **DV**, independent variable **IV** and groups as random effects (**Cluster**, **Subject**). The **IV** varies accross **Cluster** and **Subject**.
+Say we have a model with a dependent variable **DV**, independent variable **IV** and groups as random effects (**Cluster**, **Subject**). The **IV** varies across **Cluster** and **Subject**.
 
 Is this a nested, fully crossed or cross-classified design?
 
@@ -43,6 +43,29 @@ If each **Subject** receives the same **Cluster** (i.e. subjects appear in all c
 
 ```{r eval=FALSE}
 lmer(DV ~ IV + (1 + IV | Cluster) + (1 + IV | Subject), data = ...)
+```
+
+## Easily check if group factors are nested or crossed
+
+You can use the [**sjmisc**-package](https://strengejacke.github.io/sjmisc/) to check whether group factors are (fully) crossed, nested or cross-classified.
+
+`is_cross_classified()` returns `TRUE`, so a cross-classified design would be appropriate for this random effects structure.
+
+```{r}
+# data with cross-classified distribution of "cluster" and "subject"
+data <- data.frame(
+  cluster = rep(1:5, each = 3),
+  subject = c(1,2,3, 1, 2, 4, 1, 2, 3, 1, 2, 5, 1, 2, 4)
+)
+
+# the table output indicates that data is not nested, but also not fully crossed
+table(data)
+
+# check nesting / crossing of group factors
+library(sjmisc)
+is_nested(data$cluster, data$subject)
+is_crossed(data$cluster, data$subject)
+is_cross_classified(data$cluster, data$subject)
 ```
 
 # References
