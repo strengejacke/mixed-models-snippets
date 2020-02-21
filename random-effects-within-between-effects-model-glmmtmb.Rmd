@@ -330,7 +330,7 @@ tab_model(
 
 ## Conclusion
 
-If the Gauss-Markov-assumption is violated, i.e. when group factors (random effects) and time-varying predictors correlate, it's recommended to fit a complex random-effect-within-between model (REWB) instead of a "simple" mixed effects model. This requires de- and group-meaning the time-varying predictors. Depending on the data structure, random slope and intercept may correlate or not.
+When group factors (random effects) and (time-constant) predictors correlate, it's recommended to fit a complex random-effect-within-between model (REWB) instead of a "simple" mixed effects model. This requires de- and group-meaning the time-varying predictors. Depending on the data structure, random slope and intercept may correlate or not.
 
 The random effects structure, i.e. how to model random slopes and intercepts and allow correlations among them, depends on the nature of the data. The benefits from using mixed effects models over fixed effects models are more precise estimates (in particular when random slopes are included) and the possibility to include between-subjects effects.
 
