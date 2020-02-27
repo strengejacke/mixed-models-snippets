@@ -251,7 +251,7 @@ Here we see a significant improvement of the Mundlak-model over the simple RE-mo
 
 ## Comparison FE- and REWB-Model
 
-The funtion `felm()` from the package **lfe** was used to compute the fixed effects regression models. Base R's `lm()` gives the same result, however, the output is much longer due to the ID-parameters.
+The function `felm()` from the package **lfe** was used to compute the fixed effects regression models. Base R's `lm()` gives the same result, however, the output is much longer due to the ID-parameters.
 
 ```{r echo=FALSE}
 f <- "y<sub>it</sub> = &beta;<sub>1</sub> (x<sub>it</sub> - &#x035E;x<sub>i</sub>) + (&upsilon;<sub>i</sub> + &epsilon;<sub>it</sub>)"
