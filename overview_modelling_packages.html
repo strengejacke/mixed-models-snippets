@@ -386,6 +386,13 @@ summary {
 <div id="modelling-packages" class="section level2">
 <h2>Modelling Packages</h2>
 <table>
+<colgroup>
+<col width="10%"></col>
+<col width="15%"></col>
+<col width="4%"></col>
+<col width="51%"></col>
+<col width="17%"></col>
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Nature of Response</th>
@@ -593,7 +600,7 @@ summary {
 <td align="left"></td>
 </tr>
 <tr class="odd">
-<td align="left">Continuous, (right) skewed, probably with spike at zero</td>
+<td align="left">(Semi-)Continuous, (right) skewed, probably with spike at zero (zero-inlfated)</td>
 <td align="left">Financial data, probably exponential dispersion of variance</td>
 <td align="left">Tweedie</td>
 <td align="left"><a href="https://www.rdocumentation.org/packages/statmod/versions/1.4.32/topics/tweedie"><code>glm(family=tweedie)</code></a>, <a href="https://www.rdocumentation.org/packages/cplm/versions/0.7-8/topics/cpglm"><code>cpglm()</code></a></td>
@@ -604,6 +611,20 @@ summary {
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"><a href="https://www.rdocumentation.org/packages/cplm/versions/0.7-8/topics/cpglmm"><code>cpglmm()</code></a>, <a href="https://www.rdocumentation.org/packages/glmmTMB/versions/1.0.0/topics/glmmTMB"><code>glmmTMB(family=tweedie)</code></a></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">(Semi-)Continuous, (right) skewed, probably with spike at zero (zero-inlfated)</td>
+<td align="left">Normal distribution, but negative values are censored and stacked on zero</td>
+<td align="left">Tobit</td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/AER/versions/1.2-9/topics/tobit"><code>tobit()</code></a>, <a href="https://www.rdocumentation.org/packages/censReg/versions/0.5-30/topics/censReg"><code>censReg()</code></a></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/smicd/versions/1.1.0/topics/semLme"><code>semLme()</code></a></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
@@ -653,6 +674,7 @@ summary {
 <li><a href="https://CRAN.R-project.org/package=MCMCglmm">MCMCglmm</a>: <code>MCMCglmm()</code></li>
 <li><a href="https://CRAN.R-project.org/package=mixor">mixor</a>: <code>mixor()</code></li>
 <li><a href="https://CRAN.R-project.org/package=ordinal">ordinal</a>: <code>clmm()</code>, <code>clmm2()</code></li>
+<li><a href="https://cran.r-project.org/package=smicd">smicd</a>: <code>semLme()</code></li>
 </ul>
 </div>
 <div id="handout" class="section level2">
