@@ -25,7 +25,7 @@ This overview raises no claims towards completeness of available modelling packa
 kable(tab)
 ```
 
-_Note that ratios or proportions from count data, like `cbind(trials, success)`, are modelled as logistic regression with `glm(cbind(trials, success), family=binomial())`, while ratios from continuous data where the response ranges from 0 to 1 are modelled using beta-regression._
+_Note that ratios or proportions from **count data**, like `cbind(trials, success)`, are modelled as logistic regression with `glm(cbind(trials, success), family=binomial())`, while ratios from **continuous data** (where the response ranges from 0 to 1) are modelled using beta-regression._
 
 ## Included packages for non-mixed models:
 
