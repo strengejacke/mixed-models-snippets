@@ -36,6 +36,7 @@ _Note that ratios or proportions from count data, like `cbind(trials, success)`,
   - [brglm2](https://CRAN.R-project.org/package=brglm2): `bracl()`, `brmultinom()`
   - [censReg](https://CRAN.R-project.org/package=censReg): `censReg()`
   - [cplm](https://CRAN.R-project.org/package=cplm): `cpglm()`
+  - [coxph](https://CRAN.R-project.org/package=survival): `coxph()`
   - [DirichletReg](https://CRAN.R-project.org/package=DirichletReg): `DirichReg()`
   - [HRQoL](https://CRAN.R-project.org/package=HRQoL): `BBreg()`
   - [MASS](https://CRAN.R-project.org/package=MASS): `glm.nb()`, `polr()`
@@ -48,6 +49,7 @@ _Note that ratios or proportions from count data, like `cbind(trials, success)`,
 ## Included packages for mixed models:
 
   - [cplm](https://CRAN.R-project.org/package=cplm): `cpglmm()`
+  - [coxme](https://CRAN.R-project.org/package=coxme): `coxme()`
   - [glmmTMB](https://CRAN.R-project.org/package=glmmTMB): `glmmTMB()`
   - [lme4](https://CRAN.R-project.org/package=lme4): `lmer()`, `glmer()`, `glmer.nb()`
   - [MCMCglmm](https://CRAN.R-project.org/package=MCMCglmm): `MCMCglmm()`
