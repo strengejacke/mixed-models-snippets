@@ -27,6 +27,8 @@ kable(tab)
 
 _Note that ratios or proportions from **count data**, like `cbind(successes, failures)`, are modelled as logistic regression with `glm(cbind(successes, failures), family=binomial())`, while ratios from **continuous data** (where the response ranges from 0 to 1) are modelled using beta-regression._
 
+_Usually, zero-inflated models are used when 0 or 1 come from a separate process or category. However, when the 0/1 values are most consistent with censoring rather than with a separate category/process, the ordered beta regression is probably a better choice (i.e., 0 mean "below detection", not "something qualitatively different happened") (Source: https://twitter.com/bolkerb/status/1577755600808775680)_
+
 ## Included packages for non-mixed models:
 
   - Base R: `lm()`, `glm()`
@@ -41,6 +43,7 @@ _Note that ratios or proportions from **count data**, like `cbind(successes, fai
   - [HRQoL](https://CRAN.R-project.org/package=HRQoL): `BBreg()`
   - [MASS](https://CRAN.R-project.org/package=MASS): `glm.nb()`, `polr()`
   - [nnet](https://CRAN.R-project.org/package=nnet): `multinom()`
+  - [ordbetareg](https://cran.r-project.org/package=ordbetareg): `ordbetareg()`
   - [ordinal](https://CRAN.R-project.org/package=ordinal): `clm()`, `clm2()`
   - [pscl](https://CRAN.R-project.org/package=pscl): `zeroinfl()`, `hurdle()`
   - [statmod](https://CRAN.R-project.org/package=statmod): `tweedie()`
@@ -54,6 +57,7 @@ _Note that ratios or proportions from **count data**, like `cbind(successes, fai
   - [lme4](https://CRAN.R-project.org/package=lme4): `lmer()`, `glmer()`, `glmer.nb()`
   - [MCMCglmm](https://CRAN.R-project.org/package=MCMCglmm): `MCMCglmm()`
   - [mixor](https://CRAN.R-project.org/package=mixor): `mixor()`
+  - [ordbetareg](https://cran.r-project.org/package=ordbetareg): `ordbetareg()`
   - [ordinal](https://CRAN.R-project.org/package=ordinal): `clmm()`, `clmm2()`
   - [smicd](https://cran.r-project.org/package=smicd): `semLme()`
   
