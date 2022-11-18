@@ -298,23 +298,17 @@ overflow-y: auto;
 border: 1px solid #ddd;
 border-radius: 4px;
 }
-.tabset-dropdown > .nav-tabs > li.active:before {
-content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+content: "\e259";
 font-family: 'Glyphicons Halflings';
 display: inline-block;
 padding: 10px;
 border-right: 1px solid #ddd;
 }
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-content: "";
-border: none;
-}
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-content: "";
+content: "\e258";
 font-family: 'Glyphicons Halflings';
-display: inline-block;
-padding: 10px;
-border-right: 1px solid #ddd;
+border: none;
 }
 .tabset-dropdown > .nav-tabs > li.active {
 display: block;
@@ -587,7 +581,7 @@ generation</a></td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
-<td align="left"><a href="https://www.rdocumentation.org/packages/glmmTMB/versions/1.0.0/topics/glmmTMB"><code>glmmTMB(ziformula, family=beta_family/betabinomial)</code></a><a href="https://www.rdocumentation.org/packages/ordbetareg/versions/0.2.1"><code>ordbetareg()</code></a></td>
+<td align="left"><a href="https://www.rdocumentation.org/packages/glmmTMB/versions/1.0.0/topics/glmmTMB"><code>glmmTMB(ziformula, family=beta_family/betabinomial/ordbeta)</code></a><a href="https://www.rdocumentation.org/packages/ordbetareg/versions/0.2.1"><code>ordbetareg()</code></a></td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
